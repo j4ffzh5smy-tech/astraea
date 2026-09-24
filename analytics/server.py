@@ -5,10 +5,15 @@
 import json
 import os
 import sqlite3
+import sys
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
+
+# 无窗口（pythonw）运行时 stdout 为 None，重定向防止 print 报错
+if sys.stdout is None:
+    sys.stdout = open(os.devnull, "w", encoding="utf-8")
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 DB = os.path.join(BASE, "data.db")

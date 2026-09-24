@@ -10,12 +10,20 @@ import sys
 import time
 import urllib.request
 
+# 无窗口（pythonw）运行时 stdout/stderr 为 None，重定向防止 print 报错
+if sys.stdout is None:
+    sys.stdout = open(os.devnull, "w", encoding="utf-8")
+if sys.stderr is None:
+    sys.stderr = open(os.devnull, "w", encoding="utf-8")
+
 BASE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(BASE)
 CF = os.path.join(BASE, "cloudflared.exe")
 CF_URL = "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe"
 TRACKER = os.path.join(ROOT, "tracker.json")
 PORT = 8931
+# 后台运行时子进程也不弹窗口
+NO_WINDOW = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
 
 
 def ensure_cloudflared():
@@ -42,12 +50,13 @@ def push_tracker(endpoint):
 def main():
     ensure_cloudflared()
 
-    server = subprocess.Popen([sys.executable, os.path.join(BASE, "server.py")], cwd=BASE)
+    server = subprocess.Popen([sys.executable, os.path.join(BASE, "server.py")], cwd=BASE, creationflags=NO_WINDOW)
     print("本地仪表盘: http://127.0.0.1:%d" % PORT)
 
     cf = subprocess.Popen(
         [CF, "tunnel", "--url", "http://127.0.0.1:%d" % PORT, "--no-autoupdate"],
-        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace")
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8", errors="replace",
+        creationflags=NO_WINDOW)
 
     url = None
     print("正在建立公网隧道……")
