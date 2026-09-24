@@ -521,6 +521,7 @@
   /* ================= 使用统计（匿名心跳，失败静默，不影响游戏） ================= */
   (function () {
     if (!/^https?:$/.test(location.protocol)) return; // file:// 本地打开不统计
+    if (localStorage.getItem("astraea_no_track")) return; // 作者本人浏览器不统计
     const rid = p => { try { return crypto.randomUUID(); } catch (e) { return p + Date.now() + Math.random().toString(16).slice(2); } };
     let pid = localStorage.getItem("astraea_pid");
     if (!pid) { pid = rid("p"); localStorage.setItem("astraea_pid", pid); }
