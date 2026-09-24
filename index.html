@@ -525,6 +525,8 @@
     const rid = p => { try { return crypto.randomUUID(); } catch (e) { return p + Date.now() + Math.random().toString(16).slice(2); } };
     let pid = localStorage.getItem("astraea_pid");
     if (!pid) { pid = rid("p"); localStorage.setItem("astraea_pid", pid); }
+    // 作者本人已知的 pid 直接不发心跳（双保险，服务端 exclude_pids.txt 还会再拦一次）
+    if (["27eb8645-374e-44ca-a7ce-9186115000b7", "ad00afa9-7b09-4e73-8d7e-2c158ecfddcf"].indexOf(pid) >= 0) return;
     let sid = sessionStorage.getItem("astraea_sid");
     if (!sid) { sid = rid("s"); sessionStorage.setItem("astraea_sid", sid); }
     let endpoint = null;

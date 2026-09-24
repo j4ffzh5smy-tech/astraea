@@ -12,9 +12,27 @@ from urllib.parse import urlparse, parse_qs
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 DB = os.path.join(BASE, "data.db")
+EXCLUDE_FILE = os.path.join(BASE, "exclude_pids.txt")
 PORT = 8931
 ONLINE_WINDOW = 90          # 90 秒内有心跳视为在线
 SESSION_TAIL = 30           # 会话结束时长补偿：最后一个心跳后再计 30 秒
+
+
+def load_exclude_pids():
+    # exclude_pids.txt：每行一个要排除的 pid（# 开头为注释），作者本人等不计入统计
+    pids = set()
+    try:
+        with open(EXCLUDE_FILE, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    pids.add(line)
+    except OSError:
+        pass
+    return pids
+
+
+exclude_pids = load_exclude_pids()
 
 db_lock = threading.Lock()
 conn = sqlite3.connect(DB, check_same_thread=False)
@@ -34,6 +52,8 @@ def clean(s, n=64):
 
 
 def record(pid, sid):
+    if pid in exclude_pids:
+        return
     now = time.time()
     with db_lock:
         row = conn.execute("SELECT 1 FROM sessions WHERE sid=?", (sid,)).fetchone()
