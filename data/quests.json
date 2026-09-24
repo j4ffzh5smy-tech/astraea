@@ -1,0 +1,508 @@
+{
+ "handcrafted": [
+  {
+   "id": "q_m_depart",
+   "name": "第一章 · 走出烬炉镇",
+   "rank": "主",
+   "source": "main",
+   "series": "main",
+   "auto": true,
+   "giver": "martha",
+   "turnin": "auto",
+   "brief": "玛尔塔说得对：吃饱了，天大的事再说。现在吃饱了——从镇门出发，踏上雾帷森林的林缘小径。",
+   "hint": "操作：酒馆 →「前往 镇广场」→「前往 镇门」→「前往 雾帷森林·林缘小径」。",
+   "objective": {
+    "type": "visit_node",
+    "region": "mistwood",
+    "node": "forest_edge"
+   },
+   "rewards": {
+    "gold": 0,
+    "rep": 0,
+    "exp": 10
+   },
+   "auto_text": "镇门在身后合上。雾气、狼嚎、传说——外面的世界第一次在你面前铺开。",
+   "next": "q_m_first"
+  },
+  {
+   "id": "q_m_first",
+   "name": "第二章 · 世界的第一件麻烦",
+   "rank": "主",
+   "source": "main",
+   "series": "main",
+   "auto": true,
+   "giver": "auto",
+   "turnin": "auto",
+   "brief": "委托是探索的产物。在野外走走，第一件事会自己撞上你——或者去镇广场的悬赏板主动接一单。",
+   "hint": "操作：在林缘小径点「探索四周」，或回镇广场点「查看悬赏板」接取任意委托。",
+   "objective": {
+    "type": "flag",
+    "flag": "any_quest_accepted"
+   },
+   "rewards": {
+    "gold": 0,
+    "rep": 0,
+    "exp": 10
+   },
+   "auto_text": "你在日志上记下了第一笔。冒险者的日子，从'有人需要你'开始。",
+   "next": "q_m_resolve"
+  },
+  {
+   "id": "q_m_resolve",
+   "name": "第三章 · 有始有终",
+   "rank": "主",
+   "source": "main",
+   "series": "main",
+   "auto": true,
+   "giver": "auto",
+   "turnin": "auto",
+   "brief": "完成并交付任意一项委托。接了事，就要有了结——这是铜壶公会的规矩，也是做人的规矩。",
+   "hint": "操作：按委托日志的目标完成后，回到委托人处点「交付委托」。",
+   "objective": {
+    "type": "flag",
+    "flag": "any_quest_completed"
+   },
+   "rewards": {
+    "gold": 0,
+    "rep": 0,
+    "exp": 15
+   },
+   "auto_text": "第一项委托了结。镇上开始有人记得你的名字了。",
+   "next": "q_m_register"
+  },
+  {
+   "id": "q_m_register",
+   "name": "第四章 · 注册猎人",
+   "rank": "主",
+   "source": "main",
+   "series": "main",
+   "auto": true,
+   "giver": "finn",
+   "turnin": "auto",
+   "brief": "声望到 20 后，去酒馆二楼找芬恩，正式登记为公会的注册猎人。",
+   "hint": "操作：完成委托累积声望（D 级 +8~12，C 级 +25~30），然后「前往 酒馆二楼」与芬恩交谈。",
+   "objective": {
+    "type": "flag",
+    "flag": "registered_hunter"
+   },
+   "rewards": {
+    "gold": 0,
+    "rep": 0,
+    "exp": 20
+   },
+   "auto_text": "铜壶徽章别上衣领的那一刻，你忽然理解了芬恩为什么把条例背得滚瓜烂熟。",
+   "next": "q_m_rift"
+  },
+  {
+   "id": "q_m_rift",
+   "name": "第五章 · 向东，向热处",
+   "rank": "主",
+   "source": "main",
+   "series": "main",
+   "auto": true,
+   "giver": "auto",
+   "turnin": "auto",
+   "brief": "酒馆的传闻、布洛姆的订单、天边的红光，都指向同一个方向：熔痕裂谷。走到矿工营地去。",
+   "hint": "操作：镇门 →「前往 熔痕裂谷·裂谷边缘」→ 黑曜石坡道 → 矿工营地。裂谷耗水加倍，多备饮水。",
+   "objective": {
+    "type": "visit_node",
+    "region": "lavarift",
+    "node": "miner_camp"
+   },
+   "rewards": {
+    "gold": 0,
+    "rep": 0,
+    "exp": 20
+   },
+   "auto_text": "谷底的红光把营地的影子拉得很长。黛拉打量着你：'你就是烬炉镇那个新人？'\n她顿了顿：'来得正好。'（留意坡道上的呼救声——有人的命悬在塌方的矿道里。）",
+   "next": "q_m_deed"
+  },
+  {
+   "id": "q_m_deed",
+   "name": "第六章 · 拿得出手的事迹",
+   "rank": "主",
+   "source": "main",
+   "series": "main",
+   "auto": true,
+   "giver": "auto",
+   "turnin": "auto",
+   "brief": "完成任意一项 C 级委托。声望来自事迹，而事迹，是以后酒馆的壁炉边被人讲很多年的事。",
+   "hint": "操作：C 级委托包括护送青芷（森林偶遇）、塌方救援（裂谷坡道偶遇）、狼王讨伐（猎户小屋告示）、火元素调查（矿工营地告示）、月琴（酒馆八卦）。",
+   "objective": {
+    "type": "flag",
+    "flag": "c_quest_done"
+   },
+   "rewards": {
+    "gold": 0,
+    "rep": 20,
+    "exp": 100
+   },
+   "auto_text": "事迹登记入册。芬恩在你的名字后面添了一行小字，你瞄到了：'值得关注。'\n——主线至此暂告一段落。世界还很大：月光苔洞窟的微光、龙鳞岩台的暗金、镜湖吟游诗人的琴，都在等你。"
+  },
+  {
+   "id": "q_d_herb",
+   "name": "药草的底子",
+   "rank": "D",
+   "source": "board",
+   "series": "side",
+   "giver": "ada",
+   "turnin": "ada",
+   "brief": "艾达的雾绒草断了货。悬赏板：采集雾绒草 ×3（雾帷森林·采药点）。",
+   "objective": {
+    "type": "collect",
+    "item": "herb_mist",
+    "count": 3
+   },
+   "rewards": {
+    "gold": 15,
+    "rep": 10,
+    "exp": 20
+   },
+   "complete_text": "艾达验了货，难得地夸了一句：'银边完整，是好手采的。'"
+  },
+  {
+   "id": "q_d_ore",
+   "name": "炉子的胃口",
+   "rank": "D",
+   "source": "board",
+   "series": "side",
+   "giver": "brom",
+   "turnin": "brom",
+   "brief": "布洛姆接了一批骑士团风格的订单，缺火纹矿。悬赏板：火纹矿石 ×2（熔痕裂谷·矿脉）。",
+   "objective": {
+    "type": "collect",
+    "item": "ore_fire",
+    "count": 2
+   },
+   "rewards": {
+    "gold": 20,
+    "rep": 10,
+    "exp": 20
+   },
+   "complete_text": "布洛姆把矿石举到炉火前比了比纹路，点头：'能打出好钢。'"
+  },
+  {
+   "id": "q_d_wolves",
+   "name": "林缘的牙",
+   "rank": "D",
+   "source": "board",
+   "series": "side",
+   "giver": "finn",
+   "turnin": "finn",
+   "brief": "狼群近来频频逼近林缘小径。悬赏板：讨伐森林狼 ×3。",
+   "objective": {
+    "type": "kill",
+    "monster": "wolf",
+    "count": 3
+   },
+   "rewards": {
+    "gold": 18,
+    "rep": 10,
+    "exp": 25
+   },
+   "complete_text": "芬恩按条例第七款登记完毕，认真地说：'林缘小径的安全等级，上调半级。'"
+  },
+  {
+   "id": "q_d_child",
+   "name": "发光的小鹿",
+   "rank": "D",
+   "source": "encounter",
+   "series": "side",
+   "giver": "villager",
+   "turnin": "villager",
+   "brief": "村妇的儿子小荞追着'发光的小鹿'跑进了雾帷森林。去迷雾深处找到他。",
+   "objective": {
+    "type": "visit",
+    "node": "deep_mist",
+    "with_flag": "found_doumiao"
+   },
+   "rewards": {
+    "gold": 10,
+    "rep": 12,
+    "exp": 25
+   },
+   "complete_text": "村妇抱着小荞又哭又笑。孩子挣脱出来，认真地对你说：'小鹿让我看了会发光的山洞，是谢礼。'",
+   "side_effect": {
+    "flag": {
+     "moss_glow_seen": 2
+    }
+   }
+  },
+  {
+   "id": "q_d_caravan",
+   "name": "烧剩的商路",
+   "rank": "D",
+   "source": "encounter",
+   "series": "side",
+   "giver": "ada",
+   "turnin": "ada",
+   "brief": "北去的道路上有一支商队被烧成了焦炭。把能证明身份的货箱碎片带给艾达——那是她等了三天的货。",
+   "objective": {
+    "type": "collect",
+    "item": "crate_shard",
+    "count": 1
+   },
+   "rewards": {
+    "gold": 15,
+    "rep": 10,
+    "exp": 20
+   },
+   "complete_text": "艾达盯着碎片上的烙印看了很久，把它收进柜台底下：'第三批了。这条商路，怕是要断了。'",
+   "side_effect": {
+    "flag": {
+     "burned_caravan_found": true
+    }
+   }
+  },
+  {
+   "id": "q_c_escort",
+   "name": "采药人的天时",
+   "rank": "C",
+   "source": "encounter",
+   "series": "side",
+   "giver": "xiaoduan",
+   "turnin": "garo",
+   "brief": "青芷在林间空地被狼群困住了。护送他穿过森林，到猎户小屋。",
+   "objective": {
+    "type": "escort",
+    "npc": "xiaoduan",
+    "to": "hunter_hut",
+    "waves": [
+     {
+      "monster": "wolf",
+      "count": 2
+     },
+     {
+      "monster": "wolf",
+      "count": 2
+     }
+    ]
+   },
+   "rewards": {
+    "gold": 45,
+    "rep": 25,
+    "exp": 50
+   },
+   "complete_text": "加洛给青芷倒了碗热汤，瞥你一眼：'走得不急。像个正经猎人了。'"
+  },
+  {
+   "id": "q_c_lute",
+   "name": "琴在，路就在",
+   "rank": "C",
+   "source": "rumor",
+   "series": "side",
+   "giver": "laen",
+   "turnin": "laen",
+   "require_flag": {
+    "heard_bard_rumor": true
+   },
+   "brief": "镜湖来的吟游诗人把月琴丢在了熔痕裂谷。向矿工营地的黛拉打听，再到龙鳞岩台附近找回月琴。",
+   "objective": {
+    "type": "collect",
+    "item": "moonlute",
+    "count": 1,
+    "hint_node": "scale_ledge"
+   },
+   "rewards": {
+    "gold": 40,
+    "rep": 25,
+    "exp": 50
+   },
+   "complete_text": "莱恩接过琴，调了调弦，当场唱了一支镜湖的歌。唱完他说：'这歌送你。以后你走到再远的地方，它都比路远。'"
+  },
+  {
+   "id": "q_c_collapse",
+   "name": "塌方之下",
+   "rank": "C",
+   "source": "encounter",
+   "series": "side",
+   "giver": "miner",
+   "turnin": "della",
+   "brief": "黑曜石坡道下传来呼救——矿道塌方，小燧被堵在熔痕深处，火蜥蜴正在塌石外打转。",
+   "objective": {
+    "type": "kill",
+    "monster": "firesalamander",
+    "count": 2,
+    "then_flag": "saved_xiaojue"
+   },
+   "rewards": {
+    "gold": 50,
+    "rep": 30,
+    "exp": 55
+   },
+   "complete_text": "黛拉清点完人数，第一次叫了你的名字而不是'那个冒险的'：'营地欠你一次。'"
+  },
+  {
+   "id": "q_c_wolfking",
+   "name": "掂量",
+   "rank": "C",
+   "source": "notice",
+   "series": "side",
+   "giver": "garo",
+   "turnin": "garo",
+   "brief": "猎户小屋告示：讨伐狼王灰鬃（废弃哨塔）。加洛的批注只有一句：'走得不急的人来。'",
+   "objective": {
+    "type": "kill",
+    "monster": "wolfking",
+    "count": 1
+   },
+   "rewards": {
+    "gold": 55,
+    "rep": 30,
+    "exp": 60
+   },
+   "complete_text": "加洛听完战斗的经过，沉默了很久：'它最后看你的那一眼——你懂它意思的时候，你就是这个林子的猎人了。'"
+  },
+  {
+   "id": "q_c_elemental",
+   "name": "红得发白",
+   "rank": "C",
+   "source": "notice",
+   "series": "side",
+   "giver": "della",
+   "turnin": "della",
+   "brief": "矿工营地告示：熔痕深处火元素异动，已伤两名矿工。讨伐失控火元素。",
+   "objective": {
+    "type": "kill",
+    "monster": "fireelemental",
+    "count": 1
+   },
+   "rewards": {
+    "gold": 60,
+    "rep": 30,
+    "exp": 65
+   },
+   "complete_text": "黛拉望着谷底红得发白的光：'矿务行会的人来量过，什么都没说。现在连元素都疯了——地底下那东西，翻身的动静越来越大了。'"
+  },
+  {
+   "id": "q_d_grain",
+   "name": "账上的麦子",
+   "rank": "D",
+   "source": "notice",
+   "series": "side",
+   "giver": "tongshi",
+   "turnin": "tongshi",
+   "brief": "西林哨所告示：流民营存粮见底，征集干粮 ×3。佟石的批注：'账上没有大概两个字，有就收。'",
+   "objective": {
+    "type": "collect",
+    "item": "ration",
+    "count": 3
+   },
+   "rewards": {
+    "gold": 25,
+    "rep": 10,
+    "exp": 20
+   },
+   "complete_text": "佟石把干粮过秤、入账，忽然从柜台下摸出一块压得极结实的军粮饼塞给你：'账外的东西，不算数。'"
+  },
+  {
+   "id": "q_c_hawks",
+   "name": "山口无雷的日子",
+   "rank": "C",
+   "source": "notice",
+   "series": "side",
+   "giver": "weishuang",
+   "turnin": "weishuang",
+   "brief": "西林哨所告示：雷鹰在雷音栈道筑巢，商队已经三批不敢过。清剿雷鹰 ×2。",
+   "objective": {
+    "type": "kill",
+    "monster": "thunderhawk",
+    "count": 2
+   },
+   "rewards": {
+    "gold": 50,
+    "rep": 25,
+    "exp": 55
+   },
+   "complete_text": "卫霜听完汇报，没有点头——她抬手，给了你一个标准的银棘军礼。'哨所记下了。'"
+  },
+  {
+   "id": "q_c_shrine",
+   "name": "雷声没走",
+   "rank": "C",
+   "source": "encounter",
+   "series": "side",
+   "giver": "shrine_keeper",
+   "turnin": "shrine_keeper",
+   "brief": "风暴神龛里传出撞门声，守龛老人闭门不出。去神龛看个究竟。",
+   "objective": {
+    "type": "kill",
+    "monster": "shrine_ape",
+    "count": 1
+   },
+   "rewards": {
+    "gold": 55,
+    "rep": 25,
+    "exp": 60
+   },
+   "complete_text": "老人用袖子把名录上的魈爪印一点点擦干净，擦到那行小字时，手停了停。'镇雷者守的是雷，我守的是他们。今天——谢谢你替我们都守了一次。'"
+  },
+  {
+   "id": "q_c_deserter",
+   "name": "名册上少的人",
+   "rank": "C",
+   "source": "notice",
+   "series": "side",
+   "giver": "weishuang",
+   "turnin": "weishuang",
+   "brief": "西林哨所告示：新兵阿七三天前夜逃，最后目击在雷鸣山口旧关门一带。卫霜的批注：「带回来。活的。」",
+   "objective": {
+    "type": "flag",
+    "flag": "deserter_caught"
+   },
+   "rewards": {
+    "gold": 40,
+    "rep": 25,
+    "exp": 50
+   },
+   "complete_text": "卫霜看着押回来的阿七，很久没说话。最后她摆摆手：「禁闭十天，然后去流民粥棚帮工——账，让他自己还。」她看向你：「你抓人的手法，比我的兵稳。」"
+  }
+ ],
+ "board_generator": {
+  "templates": [
+   {
+    "type": "kill",
+    "monsters": [
+     "wolf",
+     "goblin"
+    ],
+    "count": [
+     2,
+     4
+    ],
+    "rank": "D",
+    "names": [
+     "清道",
+     "拔除",
+     "巡边的报酬"
+    ],
+    "gold": [
+     10,
+     20
+    ],
+    "rep": 8,
+    "exp": 15
+   },
+   {
+    "type": "collect",
+    "items": [
+     "herb_mist",
+     "ore_fire",
+     "sulfur"
+    ],
+    "count": [
+     2,
+     3
+    ],
+    "rank": "D",
+    "names": "ITEM",
+    "gold": [
+     10,
+     18
+    ],
+    "rep": 8,
+    "exp": 15
+   }
+  ]
+ }
+}

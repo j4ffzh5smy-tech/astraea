@@ -1,0 +1,23 @@
+[
+  {"id": "r_dragon_1", "text": "东边的流民说，龙眠荒原的边界又往外挪了。不是地挪了——是夜里天边的那道红光，挪了。", "source": ["martha", "oldwoman"], "weight": 3, "set_flag": {"dragon_rumor_count": "+1"}},
+  {"id": "r_dragon_2", "text": "有猎人在雾帷森林北缘见过一排爪印，每个足有桌面大，陷进泥里半尺。没人敢顺着爪印往北看。", "source": ["garo", "finn"], "weight": 2, "set_flag": {"dragon_rumor_count": "+1"}},
+  {"id": "r_dragon_3", "text": "迁村的队伍昨天过了镇子。三百多口人，一言不发地走。领头的孩子回头看了很久，看的不是村子，是天。", "source": ["martha", "oldwoman"], "weight": 2, "set_flag": {"dragon_rumor_count": "+1"}},
+  {"id": "r_capital_1", "text": "王都商会的加税文书上月就到了各联络点：辉门一咳嗽，整条商路都发烧。边镇的油、盐、铁钉，开春全得换个价。", "source": ["martha", "ada"], "weight": 3},
+  {"id": "r_capital_2", "text": "银棘骑士团明年开春选拔。听说今年辉门查纹章查得格外严，没身份的人，连城墙根的草都摸不着。", "source": ["finn", "martha"], "weight": 2},
+  {"id": "r_capital_3", "text": "王都矿务行会的人上月去了裂谷，带着测量仪器。量完，一句话没说就走了。——什么都没说，才是最吓人的。", "source": ["della"], "weight": 2},
+  {"id": "r_bard", "text": "酒馆最近住了位镜湖来的吟游诗人，逢人就问有没有人去裂谷——他把随身的月琴丢在那儿了。镜湖人的琴，据说跟命差不多。", "source": ["martha", "finn"], "weight": 2, "once": true, "set_flag": {"heard_bard_rumor": true}},
+  {"id": "r_lake", "text": "镜湖的水能照见人心里的事。所以镜湖人从小学会两件事：唱歌，和不看水面。", "source": ["laen", "martha"], "weight": 2},
+  {"id": "r_ash_1", "text": "矿上有夜班的兄弟在岩壁上见过一个标记——像一小撮摆成人形的灰。第二天再看，没了。", "source": ["della", "yanshu"], "weight": 2, "set_flag": {"heard_ash_society": true}},
+  {"id": "r_ash_2", "text": "裂谷有些矿道不是行会挖的。丢过矿灯，丢过整筐火纹矿，但从没丢过人。他们不害矿工——嫌我们穷。", "source": ["della"], "weight": 1, "require_flag": {"heard_ash_society": true}},
+  {"id": "r_moss", "text": "迷雾深处有一整面会发光的墙。我见过一次，找了三十年没再找着。你要是真找着了……替老头子多看两眼。", "source": ["garo"], "weight": 2},
+  {"id": "r_scale", "text": "南边矿道尽头有个怪地方，岩层里嵌着东西，暗金色的。我没敢细看。人老了，知道什么不该看。", "source": ["yanshu"], "weight": 2, "once": true, "set_flag": {"heard_scale_rumor": true}},
+  {"id": "r_knights", "text": "八大骑士团里，夜鸦团的名头最怪——没人知道他们驻在哪座塔，也没人承认自己见过夜鸦的人。", "source": ["finn", "kane"], "weight": 1},
+  {"id": "r_wolfking", "text": "灰鬃又下山了。上周叼走了老约翰家两只羊，没进村，像是在……提醒什么。", "source": ["garo", "martha"], "weight": 2},
+  {"id": "r_guild", "text": "公会总会来了消息：今年各联络点报上去的委托，完成量比去年多了一倍。不是世道好了，是世道乱了。", "source": ["finn"], "weight": 1},
+  {"id": "r_whitesail", "text": "白帆城的锚地，商船和走私船共用一片水。那地方什么都能买到——包括不该问的。", "source": ["qinduo", "ada"], "weight": 2},
+  {"id": "r_grassland", "text": "风语草原今年枯了一半。游牧部族把马群往南赶，星象师们说'天上的水被人借走了'——借给谁，没人敢算。", "source": ["weishuang", "oldwoman"], "weight": 2},
+  {"id": "r_orcs", "text": "西境的兽人四十年没越界了。不是不敢——碎牙可汗死了，他的儿子们在学人话。学人话的兽人，比磨牙的难对付十倍。", "source": ["weishuang"], "weight": 2},
+  {"id": "r_thunderpass", "text": "雷鸣山口的雷不是天气，是被紊流钉在山脊上的。旧战争时那儿是哨塔链，栈道上还刻着阵亡者的名字。", "source": ["qinduo", "garo"], "weight": 2},
+  {"id": "r_tomb", "text": "北边苍岩王陵，官方说有骑士团护陵，实际上十年没人换过岗。去年有盗墓的进去，出来了三个——疯了三个。", "source": ["weishuang", "della"], "weight": 1},
+  {"id": "r_stillwater", "text": "镜湖十五年前有过一次'大静水'：三十里内所有声音消失了九天。镜湖人绝口不提。从那以后，吟游诗人就一批批地离开故乡了。", "source": ["laen", "shrine_keeper"], "weight": 1}
+]

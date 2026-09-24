@@ -1,0 +1,210 @@
+{
+ "ration": {
+  "name": "干粮",
+  "type": "supply",
+  "price": 2,
+  "effect": {
+   "food": 2
+  },
+  "stack": 5,
+  "desc": "黑麦面包夹咸肉干，能放，能顶饿。"
+ },
+ "water_skin": {
+  "name": "净水",
+  "type": "supply",
+  "price": 2,
+  "effect": {
+   "water": 2
+  },
+  "stack": 5,
+  "desc": "煮过的水封在皮袋里。"
+ },
+ "potion_heal": {
+  "name": "治疗药水",
+  "type": "consumable",
+  "price": 8,
+  "effect": {
+   "hp": 15
+  },
+  "stack": 5,
+  "battle": true,
+  "desc": "布罗迪配的红药水，辣嗓子。"
+ },
+ "potion_mana": {
+  "name": "法力药水",
+  "type": "consumable",
+  "price": 8,
+  "effect": {
+   "mp": 12
+  },
+  "stack": 5,
+  "battle": true,
+  "desc": "蓝色的，尝起来像闪电。"
+ },
+ "torch": {
+  "name": "火把",
+  "type": "tool",
+  "price": 3,
+  "effect": {
+   "anti_lost": 1
+  },
+  "stack": 5,
+  "desc": "浸过松脂，雾里也能烧。"
+ },
+ "rope": {
+  "name": "绳索",
+  "type": "tool",
+  "price": 3,
+  "effect": {
+   "anti_lost": 1
+  },
+  "stack": 5,
+  "desc": "老猎户都信这个。"
+ },
+ "moss_stanch": {
+  "name": "止血苔",
+  "type": "consumable",
+  "price": 4,
+  "effect": {
+   "hp": 5
+  },
+  "stack": 5,
+  "gather": true,
+  "desc": "按在伤口上，凉丝丝的。"
+ },
+ "herb_mist": {
+  "name": "雾绒草",
+  "type": "material",
+  "price": 3,
+  "stack": 5,
+  "gather": true,
+  "quest": true,
+  "desc": "只在雾里长的银边小草，药剂的底子。"
+ },
+ "moss_moon": {
+  "name": "月光苔",
+  "type": "material",
+  "price": 20,
+  "stack": 5,
+  "gather": true,
+  "desc": "夜里会发光的苔，布罗迪找了七年。"
+ },
+ "ore_fire": {
+  "name": "火纹矿石",
+  "type": "material",
+  "price": 8,
+  "stack": 5,
+  "gather": true,
+  "quest": true,
+  "desc": "握着微温的矿石，断口有火焰状纹路。"
+ },
+ "sulfur": {
+  "name": "硫磺",
+  "type": "material",
+  "price": 4,
+  "stack": 5,
+  "gather": true,
+  "desc": "裂谷的特产，呛鼻子。"
+ },
+ "crate_shard": {
+  "name": "货箱碎片",
+  "type": "quest",
+  "price": 0,
+  "stack": 1,
+  "desc": "烧焦的木箱残骸，烙印着艾达杂货店的标记。"
+ },
+ "moonlute": {
+  "name": "月琴",
+  "type": "quest",
+  "price": 0,
+  "stack": 1,
+  "desc": "镜湖样式的六弦琴，琴弦在夜里微微泛光。"
+ },
+ "dragon_scale_shard": {
+  "name": "龙鳞碎片",
+  "type": "treasure",
+  "price": 80,
+  "stack": 1,
+  "desc": "从龙鳞岩台崩落的一小片，边缘锋利如新。"
+ },
+ "storm_moss": {
+  "name": "雷光苔",
+  "type": "material",
+  "price": 12,
+  "stack": 5,
+  "gather": true,
+  "desc": "被电弧喂大的苔藓，指尖一碰就窜过一小股麻意。"
+ },
+ "oil_hunt": {
+  "name": "猎魔剑油",
+  "type": "consumable",
+  "price": 18,
+  "stack": 3,
+  "battle": true,
+  "buff": "dmg_up",
+  "desc": "布罗迪的配方。下一场战斗你的伤害 +50%，一击见效。"
+ },
+ "trap_beast": {
+  "name": "捕兽夹",
+  "type": "consumable",
+  "price": 15,
+  "stack": 2,
+  "battle": true,
+  "buff": "snare",
+  "desc": "战前设下。敌人下一次反击必然落空。"
+ },
+ "potion_strong": {
+  "name": "烈性魔药",
+  "type": "consumable",
+  "price": 30,
+  "stack": 2,
+  "battle": true,
+  "effect": {
+   "hp": 999
+  },
+  "desc": "辣得眼泪直流，但 HP 全恢复。"
+ },
+ "pelt_wolf": {
+  "name": "狼皮",
+  "type": "material",
+  "price": 8,
+  "stack": 5,
+  "desc": "厚实的冬狼皮，打造护甲的好料子。"
+ },
+ "sword_firepat": {
+  "name": "火纹剑",
+  "type": "equip",
+  "slot": "weapon",
+  "atk": 4,
+  "price": 90,
+  "stack": 1,
+  "desc": "火纹矿锻的剑，挥起来带细碎火星。攻击 +4。"
+ },
+ "sword_storm": {
+  "name": "惊雷剑",
+  "type": "equip",
+  "slot": "weapon",
+  "atk": 6,
+  "price": 150,
+  "stack": 1,
+  "desc": "剑身缠着细小电弧，雨夜会嗡嗡作响。攻击 +6。"
+ },
+ "armor_wolf": {
+  "name": "狼皮甲",
+  "type": "equip",
+  "slot": "armor",
+  "def": 2,
+  "price": 70,
+  "stack": 1,
+  "desc": "冬狼皮缝的甲，轻而暖。防御 +2。"
+ },
+ "charm_scale": {
+  "name": "龙鳞护符",
+  "type": "equip",
+  "slot": "armor",
+  "def": 4,
+  "price": 160,
+  "stack": 1,
+  "desc": "一小片龙鳞穿成的护符，贴着心口是温的。防御 +4。"
+ }
+}

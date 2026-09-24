@@ -1,0 +1,52 @@
+{
+  "ashford": [
+    {"id": "ev_refugees", "w": 3, "text": "一支新的流民队伍进了镇。镇民们围在广场，递水的递水，让棚的让棚。人群里有人低声说起东边的天。", "discovery": null},
+    {"id": "ev_festival", "w": 2, "text": "镇民在广场扎丰收节的彩棚。玛尔塔叉着腰数落帮工：酒不够，全都不合格。"},
+    {"id": "ev_recruiter", "w": 2, "text": "银棘骑士团的征募官在广场停留半日，铠甲擦得能照见人。他谈论起圣辉城的选拔，像在谈论另一个世界的事。"},
+    {"id": "ev_caravan_arrive", "w": 2, "text": "西边来的商队进了镇，带来王都的新货和更新的物价。艾达的店里难得地摆满了药水。"},
+    {"id": "ev_rainy_night", "w": 1, "text": "雨下了一夜。酒馆里人格外多，壁炉烧得噼啪响，讲故事的声音一直没停。"}
+  ],
+  "mistwood": [
+    {"id": "ev_wolves", "w": 3, "battle": {"monster": "wolf", "count": [1, 3]}, "text": "雾里传来踩断枯枝的声响——森林狼，{count} 只，眼睛在雾中泛着黄光。"},
+    {"id": "ev_lost", "w": 2, "weather_boost": {"fog": 3}, "effect": {"food": -1, "water": -1}, "text": "雾忽然浓了。你在原地转了不知多久，直到踩到自己方才折断的枝条——兜了一个大圈。干粮和水都耗了些。"},
+    {"id": "ev_herb_spot", "w": 2, "weather_boost": {"clear": 2}, "gather": ["herb_mist", "moss_stanch"], "text": "雾散开一小片，露出树根处的几丛小草：银边的雾绒草，还有几株止血苔。"},
+    {"id": "ev_deer", "w": 2, "text": "一群林鹿从雾中穿过，蹄声轻得像雨。它们看了你一眼，并不怕你——这片林子不是你的，也不是它们的。"},
+    {"id": "ev_trap", "w": 1, "effect": {"hp": -3}, "text": "脚踝一紧——加洛布下的旧捕兽夹，锈了大半，还是咬得人生疼。你在夹子上看到加洛的刻记。"},
+    {"id": "ev_spider", "w": 1, "node": "deep_mist", "weather_boost": {"rain": 2}, "battle": {"monster": "mistspider", "count": [1, 2]}, "text": "头顶的雾丝垂了下来——不是雾。雾行蛛从树冠间滑落，{count} 只，腹部凝着水珠。"},
+    {"id": "ev_moss_glow", "w": 1, "node": "deep_mist", "flag": "moss_glow_seen", "text": "雾气深处透出一层极淡的青光，像月亮沉在了林子底下。你记下这个方位。"},
+    {"id": "ev_crying_villager", "w": 1, "node": "forest_edge", "once_flag": "met_crying_villager", "quest_hook": "q_d_child", "text": "林缘传来哭声。一个村妇瘫坐在路边，抓着过路人——也就是你——的袖子：她的儿子小荞追着'发光的小鹿'跑进林子，已经半天了。"}
+  ],
+  "lavarift": [
+    {"id": "ev_salamander", "w": 3, "battle": {"monster": "firesalamander", "count": [1, 2]}, "text": "岩缝里的影子动了——火蜥蜴，{count} 只，受惊的鳞片一路烧成赤红。"},
+    {"id": "ev_ore_vein", "w": 2, "weather_boost": {"clear": 2}, "gather": ["ore_fire", "sulfur"], "text": "一片岩壁在热气里泛着暗红纹路：火纹矿的露头，旁边还结着硫磺。"},
+    {"id": "ev_heat_burst", "w": 2, "effect": {"hp": -4}, "text": "脚下的岩缝毫无预兆地喷出一股热气，灼得你踉跄退开，胳膊上火辣辣一片。"},
+    {"id": "ev_miners_song", "w": 2, "text": "夜班的矿工下班了，歌声顺着坡道传上来，干巴巴的调子，唱着矿灯、烈酒和某个欠了赌债的兄弟。"},
+    {"id": "ev_scorpion", "w": 1, "node": "obsidian_slope", "battle": {"monster": "rockscorpion", "count": [1, 1]}, "text": "脚边那块'黑曜石'忽然立了起来——岩壳蝎，尾针在热空气里划出弧线。"},
+    {"id": "ev_ash_mark", "w": 1, "night_only": true, "flag": "ash_mark_seen", "discovery": "ash_mark", "text": "矿灯扫过岩壁，你停住了：一小撮灰，被摆成小小的人形，立在你从未走过的岔道口。你没来由地觉得，它是摆给你看的。"},
+    {"id": "ev_elemental_weak", "w": 1, "node": "lava_depths", "battle": {"monster": "firesalamander", "count": [2, 2]}, "text": "岩浆层方向涌来一阵异常的热浪，两只火蜥蜴被惊得疯了一般冲上来。"},
+    {"id": "ev_scale_glow", "w": 1, "node": "lava_depths", "once_flag": "scale_glow_seen", "text": "热雾深处，有一道暗金色的反光一闪而过，沉稳，古老，不像矿石。你记下这个方位。"}
+  ],
+  "thunderpass": [
+    {"id": "ev_hawk", "w": 3, "battle": {"monster": "thunderhawk", "count": [1, 2]}, "text": "头顶炸开一声哨音——雷鹰收翼俯冲，{count} 只，羽间的电弧把空气烧出一股焦味。"},
+    {"id": "ev_arc", "w": 2, "weather_boost": {"rain": 2}, "effect": {"hp": -4}, "text": "岩壁上的电弧毫无预兆地窜过栈道，银白的光擦着你的肩甲过去，半边身子麻了一瞬。"},
+    {"id": "ev_caravan_pass", "w": 2, "weather_boost": {"clear": 2}, "text": "一支商队正贴着山壁慢行，骡子驮着白帆城的货箱。秦铎朝你扬了扬下巴，让你蹭了一段路的阴凉。", "rumor": true},
+    {"id": "ev_storm_moss", "w": 2, "gather": ["storm_moss"], "text": "石缝里有几点幽蓝的光——雷光苔，被电弧喂大的苔藓，雷系药剂的引子。"},
+    {"id": "ev_ape", "w": 1, "battle": {"monster": "cragape", "count": [1, 1]}, "text": "头顶的石龛一暗——一只岩居山魈荡了下来，臂长过膝，手里已经掂好了石头。"},
+    {"id": "ev_roll_call", "w": 1, "once_flag": "roll_call_read", "discovery": "roll_call", "text": "避炮石龛的壁上刻满了名字——西境战争的阵亡者名录。你顺着刻痕读到最后，那里有一行后人补的小字：'仗打完了，雷声没走。'"},
+    {"id": "ev_shrine_noise", "w": 1, "node": "pass_mid", "once_flag": "heard_shrine_noise", "quest_hook": "q_c_shrine", "text": "雷声的间隙里，你捕捉到另一串声音：风暴神龛方向，有东西在一下一下地撞着石门。守龛老人这阵子谁也不见。"},
+    {"id": "ev_spire_gaze", "w": 1, "node": "pass_mid", "weather_boost": {"clear": 3}, "flag": "spire_gaze_seen", "text": "风忽然歇了一瞬。同行的老挑夫眯着眼指向山脊最高处：'那儿，旧瞭望台。天最好的时候，能看见圣辉城的塔尖。'"}
+  ],
+  "westwatch": [
+    {"id": "ev_register", "w": 3, "text": "辕门外又来了一支流民队伍。卫霜亲自核对名册，念一个名字，发一块木牌。队伍里有人来自风语草原的边际——他说那里的草场今年枯了一半。", "rumor": true},
+    {"id": "ev_chess", "w": 2, "text": "校场角落，两个老兵用子弹壳磨的棋子杀得难解难分，嘴里翻着四十年前哪座哨塔先丢的旧账。见你驻足，其中一个努努嘴：'后生，评评理？'"},
+    {"id": "ev_drill", "w": 2, "text": "晨操的号子炸响。二十七个人的口令，喊出了八百人的气势——喊完，队列里此起彼伏的咳嗽声又把人拉回了今年。"},
+    {"id": "ev_congee", "w": 2, "text": "粥棚前排着长队。一个汉子把最后半碗稠的让给了一个孩子，自己端着清可见底的那碗，蹲在墙根喝得很慢。"},
+    {"id": "ev_armory", "w": 1, "night_only": true, "text": "夜里路过旧军械库，你听见石墙后传来一声很轻的金属磕碰。卫霜说，是老鼠。她说话时，手一直按在钥匙上。"}
+  ],
+  "camp": [
+    {"id": "camp_companion", "w": 4, "text": "（同伴事件——若同伴在场且有未触发事件，优先发生）"},
+    {"id": "camp_beast", "w": 2, "battle": {"monster": "wolf", "count": [1, 2]}, "text": "后半夜，篝火的光圈外亮起几对黄点——野兽循着食物的味道摸了过来。"},
+    {"id": "camp_stranger", "w": 2, "text": "一个赶夜路的旅人在你的篝火旁讨了半碗热汤，作为交换，留下了一段远方的见闻。", "rumor": true},
+    {"id": "camp_quiet", "w": 3, "text": "一夜无话。只有火堆偶尔炸开一颗火星，和远处不知名野兽的长嚎。你睡了个难得的好觉。"}
+  ]
+}

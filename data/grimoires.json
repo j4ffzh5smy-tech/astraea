@@ -1,0 +1,89 @@
+{
+  "elements": ["fire", "water", "wind", "earth", "bolt", "dark", "heal", "manifest"],
+  "element_names": {"fire": "火", "water": "水", "wind": "风", "earth": "土", "bolt": "雷", "dark": "暗", "heal": "治愈", "manifest": "具现"},
+  "reroll_limit": 3,
+  "chart": {
+    "fire": {"strong": "wind", "weak": "water"},
+    "water": {"strong": "fire", "weak": "bolt"},
+    "wind": {"strong": "earth", "weak": "fire"},
+    "earth": {"strong": "bolt", "weak": "wind"},
+    "bolt": {"strong": "water", "weak": "earth"},
+    "heal": {"strong": null, "weak": null},
+    "dark": {"strong": null, "weak": null},
+    "manifest": {"strong": null, "weak": null}
+  },
+  "books": {
+    "fire": {
+      "name": "烈焰之书",
+      "pages": [
+        {"id": "fire_bolt",   "name": "火花术",   "page": 1, "unlock_lvl": 1, "mp": 3,  "dmg": 6,  "desc": "指尖弹出一束火星，最基础也最可靠。"},
+        {"id": "flame_rush",  "name": "烈焰冲击", "page": 2, "unlock_lvl": 3, "mp": 6,  "dmg": 12, "desc": "一整片火舌贴着地面扑过去。"},
+        {"id": "fire_wall",   "name": "火墙术",   "page": 3, "unlock_lvl": 5, "mp": 9,  "dmg": 17, "desc": "在目标周身立起一圈烈焰之墙。"},
+        {"id": "meteor",      "name": "陨星术",   "page": 4, "unlock_lvl": 8, "mp": 14, "dmg": 25, "desc": "从雾与夜之上，拽下一颗着火的石头。"}
+      ]
+    },
+    "water": {
+      "name": "潮汐之书",
+      "pages": [
+        {"id": "water_bolt",  "name": "水弹术",   "page": 1, "unlock_lvl": 1, "mp": 3,  "dmg": 5,  "desc": "一颗高速旋转的水弹。"},
+        {"id": "ice_spike",   "name": "冰锥术",   "page": 2, "unlock_lvl": 3, "mp": 5,  "dmg": 10, "desc": "寒气在掌心凝成一枚尖锥。"},
+        {"id": "torrent",     "name": "激流术",   "page": 3, "unlock_lvl": 5, "mp": 9,  "dmg": 15, "desc": "召出一股奔涌的激流，把目标整个吞没。"},
+        {"id": "abyss_swirl", "name": "深渊漩涡", "page": 4, "unlock_lvl": 8, "mp": 13, "dmg": 23, "desc": "在目标脚下撕开一口旋转的深水。"}
+      ]
+    },
+    "heal": {
+      "name": "晨曦之书",
+      "pages": [
+        {"id": "minor_heal",  "name": "微光治愈", "page": 1, "unlock_lvl": 1, "mp": 4,  "heal": 9,  "desc": "掌心亮起一小团暖光，覆住伤口。"},
+        {"id": "holy_bolt",   "name": "圣光弹",   "page": 2, "unlock_lvl": 3, "mp": 5,  "dmg": 10, "desc": "治愈者的自保之术，光也可以很疼。"},
+        {"id": "grand_heal",  "name": "圣愈术",   "page": 3, "unlock_lvl": 5, "mp": 10, "heal": 22, "desc": "晨光自书页漫出，皮肉以肉眼可见的速度合拢。"},
+        {"id": "judgement",   "name": "审判之光", "page": 4, "unlock_lvl": 8, "mp": 13, "dmg": 16, "heal": 12, "desc": "光落下来的地方，伤愈，敌退。"}
+      ]
+    },
+    "wind": {
+      "name": "风暴之书",
+      "pages": [
+        {"id": "wind_blade",   "name": "风刃术",   "page": 1, "unlock_lvl": 1, "mp": 3,  "dmg": 6,  "desc": "一缕被削薄的风，快得看不见。"},
+        {"id": "wind_spear",   "name": "旋风枪",   "page": 2, "unlock_lvl": 3, "mp": 6,  "dmg": 11, "desc": "风在掌心拧成一杆枪，掷出去。"},
+        {"id": "gale_blades", "name": "烈风乱刃", "page": 3, "unlock_lvl": 5, "mp": 9,  "dmg": 16, "desc": "千百片薄风，同时落在同一个地方。"},
+        {"id": "storm_eye",   "name": "风暴之眼", "page": 4, "unlock_lvl": 8, "mp": 14, "dmg": 24, "desc": "你站在风暴的中心。外面的一切，都是靶子。"}
+      ]
+    },
+    "earth": {
+      "name": "磐石之书",
+      "pages": [
+        {"id": "stone_throw", "name": "飞石术",   "page": 1, "unlock_lvl": 1, "mp": 4,  "dmg": 7,  "desc": "随手抄起大地的一角。"},
+        {"id": "rock_fall",   "name": "岩崩术",   "page": 2, "unlock_lvl": 3, "mp": 7,  "dmg": 13, "desc": "大地翻身，石头砸向不该站的地方。"},
+        {"id": "earth_split","name": "地裂术",   "page": 3, "unlock_lvl": 5, "mp": 10, "dmg": 18, "desc": "大地张开嘴，把目标整个吞下去再吐出来。"},
+        {"id": "avalanche",   "name": "山崩术",   "page": 4, "unlock_lvl": 8, "mp": 15, "dmg": 26, "desc": "大地的耐心耗尽了。"}
+      ]
+    },
+    "bolt": {
+      "name": "雷霆之书",
+      "pages": [
+        {"id": "spark_arc",  "name": "电弧术",   "page": 1, "unlock_lvl": 1, "mp": 3,  "dmg": 5,  "desc": "一道细亮的电弧，快得像从没出现过。"},
+        {"id": "thunder_fall","name": "落雷术",  "page": 2, "unlock_lvl": 3, "mp": 6,  "dmg": 12, "desc": "先看见光，再听见声音——这是雷的规矩。"},
+        {"id": "chain_bolt", "name": "连锁闪电", "page": 3, "unlock_lvl": 5, "mp": 9,  "dmg": 16, "desc": "雷找到了最短的路，穿过了目标。"},
+        {"id": "judgement_bolt","name": "天罚之雷","page": 4, "unlock_lvl": 8, "mp": 14, "dmg": 25, "desc": "整片云层的怒气，落在同一点。"}
+      ]
+    },
+    "dark": {
+      "name": "暗影之书",
+      "pages": [
+        {"id": "shadow_etch","name": "影蚀术",   "page": 1, "unlock_lvl": 1, "mp": 3,  "dmg": 6,  "desc": "影子爬上目标的脚踝，咬了一口。"},
+        {"id": "dark_devour","name": "暗噬术",   "page": 2, "unlock_lvl": 3, "mp": 6,  "dmg": 11, "desc": "黑暗从目标的影子里站了起来。"},
+        {"id": "nightfall",  "name": "夜幕降临", "page": 3, "unlock_lvl": 5, "mp": 9,  "dmg": 16, "desc": "一小块夜晚提前降临在目标身上。"},
+        {"id": "abyss_hug",  "name": "深渊之拥", "page": 4, "unlock_lvl": 8, "mp": 13, "dmg": 24, "desc": "影子的深处，还藏着一层更深的影子。"}
+      ]
+    },
+    "manifest": {
+      "name": "具现之书",
+      "pages": [
+        {"id": "mana_bolt",  "name": "魔力飞弹", "page": 1, "unlock_lvl": 1, "mp": 3,  "dmg": 6,  "desc": "纯粹的魔力捏成一颗弹丸，掷出去。"},
+        {"id": "manifest_blade","name": "具现之刃","page": 2, "unlock_lvl": 3, "mp": 6,  "dmg": 11, "desc": "想象一柄刀。够锋利，它就是真的。"},
+        {"id": "myriad_arms","name": "万象兵装", "page": 3, "unlock_lvl": 5, "mp": 9,  "dmg": 16, "desc": "一个念头，十柄刀。"},
+        {"id": "world_breaker","name": "幻想崩坏","page": 4, "unlock_lvl": 8, "mp": 13, "dmg": 24, "desc": "把想象推到极限，然后让现实来收拾残局。"}
+      ]
+    }
+  }
+}

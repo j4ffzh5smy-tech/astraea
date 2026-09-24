@@ -1,0 +1,215 @@
+{
+ "wolf": {
+  "name": "森林狼",
+  "hp": 14,
+  "atk": 5,
+  "def": 1,
+  "lvl": 1,
+  "element": "none",
+  "exp": 12,
+  "gold": 3,
+  "rank": "D",
+  "desc": "雾帷森林的常客，成群行动，眼睛在雾里泛着黄。",
+  "weak": "fire",
+  "lore": "雾帷森林的常客。旧伤在左后腿的狼会走得更慢——猎人都知道往那边引。",
+  "drops": [
+   {
+    "id": "pelt_wolf",
+    "chance": 0.6,
+    "n": 1
+   }
+  ]
+ },
+ "goblin": {
+  "name": "哥布林掠袭者",
+  "hp": 16,
+  "atk": 6,
+  "def": 1,
+  "lvl": 2,
+  "element": "none",
+  "exp": 15,
+  "gold": 6,
+  "rank": "D",
+  "desc": "魔力紊流催生的矮小魔物，贪婪，记仇，成群出没于道路。",
+  "weak": "thunder",
+  "lore": "绿皮小贼，成群才有胆子。它们的耳后没有硬皮，雷声一响就抱头。",
+  "drops": [
+   {
+    "id": "ration",
+    "chance": 0.3,
+    "n": 1
+   }
+  ]
+ },
+ "mistspider": {
+  "name": "雾行蛛",
+  "hp": 24,
+  "atk": 8,
+  "def": 2,
+  "lvl": 3,
+  "element": "water",
+  "exp": 26,
+  "gold": 8,
+  "rank": "C",
+  "desc": "在雾丝间滑行的蜘蛛，腹部凝着水珠，毒性不强但咬人很疼。",
+  "weak": "thunder",
+  "lore": "雾里的织网者。丝怕雷火，更怕你不慌——慌了才会撞进网里。",
+  "drops": [
+   {
+    "id": "herb_mist",
+    "chance": 0.4,
+    "n": 1
+   }
+  ]
+ },
+ "firesalamander": {
+  "name": "火蜥蜴",
+  "hp": 26,
+  "atk": 9,
+  "def": 2,
+  "lvl": 3,
+  "element": "fire",
+  "exp": 28,
+  "gold": 10,
+  "rank": "C",
+  "desc": "裂谷岩缝里的掠食者，受惊时全身鳞片会烧成赤红色。",
+  "weak": "water",
+  "lore": "岩浆边的住户。离开热源三息，它们的鳞就暗一半。",
+  "drops": [
+   {
+    "id": "sulfur",
+    "chance": 0.5,
+    "n": 1
+   }
+  ]
+ },
+ "rockscorpion": {
+  "name": "岩壳蝎",
+  "hp": 34,
+  "atk": 9,
+  "def": 4,
+  "lvl": 4,
+  "element": "earth",
+  "exp": 36,
+  "gold": 12,
+  "rank": "C",
+  "desc": "外壳与黑曜石无异，趴着不动时就是一块石头。",
+  "weak": "wind",
+  "lore": "岩壳再硬，关节也是肉长的。风蚀之地的老手都瞄准钳根。",
+  "drops": [
+   {
+    "id": "ore_fire",
+    "chance": 0.35,
+    "n": 1
+   }
+  ]
+ },
+ "wolfking": {
+  "name": "狼王灰鬃",
+  "hp": 55,
+  "atk": 12,
+  "def": 3,
+  "lvl": 5,
+  "element": "none",
+  "exp": 70,
+  "gold": 40,
+  "rank": "C",
+  "elite": true,
+  "desc": "雾帷森林的王者。它看你的眼神，像在掂量你值不值得它费劲。",
+  "weak": "fire",
+  "lore": "灰鬃称王八年，靠的不是牙，是耐心。它的左后腿有旧伤——加洛的批注不是玩笑。",
+  "drops": [
+   {
+    "id": "pelt_wolf",
+    "chance": 1,
+    "n": 2
+   }
+  ]
+ },
+ "fireelemental": {
+  "name": "失控火元素",
+  "hp": 70,
+  "atk": 14,
+  "def": 4,
+  "lvl": 6,
+  "element": "fire",
+  "exp": 100,
+  "gold": 60,
+  "rank": "C",
+  "elite": true,
+  "desc": "从岩浆层爬上来的魔力凝结体，没有心智，只有烧。",
+  "weak": "water",
+  "lore": "失控的「烧」凝成的形体。没有心智，所以不会躲——水泼上去，它连恨都不会。",
+  "drops": [
+   {
+    "id": "ore_fire",
+    "chance": 0.8,
+    "n": 1
+   }
+  ]
+ },
+ "thunderhawk": {
+  "name": "雷鹰",
+  "hp": 30,
+  "atk": 11,
+  "def": 2,
+  "lvl": 4,
+  "element": "bolt",
+  "exp": 38,
+  "gold": 14,
+  "rank": "C",
+  "desc": "翼展过人的猛禽，羽间缠着细小电弧，俯冲时带着哨音。",
+  "weak": "earth",
+  "lore": "雷鹰掠地之前必先拔高。盯住它收翅的那一刻——那是它唯一落地的瞬间。",
+  "drops": [
+   {
+    "id": "storm_moss",
+    "chance": 0.5,
+    "n": 1
+   }
+  ]
+ },
+ "cragape": {
+  "name": "岩居山魈",
+  "hp": 44,
+  "atk": 12,
+  "def": 3,
+  "lvl": 5,
+  "element": "earth",
+  "exp": 55,
+  "gold": 20,
+  "rank": "C",
+  "desc": "住在栈道石龛里的山魈，臂长过膝，掷石的准头比猎户还好。",
+  "weak": "wind",
+  "lore": "山魈力气能掀翻货骡，但转身慢。贴着它侧面走，它的拳头永远在找你上一秒的位置。",
+  "drops": [
+   {
+    "id": "ore_fire",
+    "chance": 0.3,
+    "n": 1
+   }
+  ]
+ },
+ "shrine_ape": {
+  "name": "神龛魈王",
+  "hp": 62,
+  "atk": 14,
+  "def": 4,
+  "lvl": 6,
+  "element": "earth",
+  "exp": 95,
+  "gold": 50,
+  "rank": "C",
+  "elite": true,
+  "desc": "占了风暴神龛的老魈，把阵亡者名录的石龛当成了自己的王座。",
+  "weak": "dark",
+  "lore": "占了神龛的老魈，守着不是自己的东西，最怕的也是「不是自己的东西」——暗蚀类的术法让它发狂也发慌。",
+  "drops": [
+   {
+    "id": "storm_moss",
+    "chance": 0.6,
+    "n": 1
+   }
+  ]
+ }
+}

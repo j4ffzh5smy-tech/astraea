@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>魔导纪元 · Astraea</title>
+<style>
+  :root {
+    --bg: #100c08; --bg2: #1a1410; --panel: #221a12; --panel2: #2a2016;
+    --line: #4a3823; --line-hi: #6b5232;
+    --ink: #ead9b8; --ink-dim: #b09b74; --amber: #e0aa45; --amber-hi: #f5c96b;
+    --red: #c8523c; --green: #86a95c; --blue: #5f87b0;
+    --kai: "Kaiti SC", "STKaiti", "KaiTi", "楷体", "Noto Serif SC", serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: "Noto Serif SC", "Songti SC", "SimSun", serif; height: 100vh; overflow: hidden; }
+  button { font-family: inherit; cursor: pointer; }
+  ::-webkit-scrollbar { width: 9px; }
+  ::-webkit-scrollbar-track { background: #171009; }
+  ::-webkit-scrollbar-thumb { background: var(--line); border: 2px solid #171009; border-radius: 5px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--line-hi); }
+
+  /* ================= 标题界面 ================= */
+  #title-screen {
+    height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+    background:
+      linear-gradient(to bottom, rgba(16,12,8,.45) 0%, rgba(16,12,8,.15) 40%, rgba(16,12,8,.88) 100%),
+      url("assets/title-bg.png") center 30% / cover no-repeat;
+    position: relative;
+  }
+  #title-screen::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    box-shadow: inset 0 0 180px 60px rgba(0,0,0,.75); }
+  #title-screen h1 {
+    font-family: var(--kai); font-size: 72px; letter-spacing: 26px; color: var(--amber-hi); text-indent: 26px;
+    text-shadow: 0 0 46px rgba(224,170,69,.6), 0 4px 18px rgba(0,0,0,.9), 0 2px 4px #000;
+    z-index: 1; font-weight: 700;
+  }
+  #title-screen .sub { color: var(--ink); letter-spacing: 5px; z-index: 1; text-shadow: 0 2px 8px #000; font-size: 15px; }
+  #title-screen .quote { font-family: var(--kai); color: var(--ink-dim); z-index: 1; text-shadow: 0 2px 6px #000; margin-top: 4px; font-size: 16px; letter-spacing: 3px; }
+  #title-screen .menu { z-index: 1; display: flex; flex-direction: column; gap: 12px; margin-top: 26px; width: 300px; }
+  .title-btn {
+    background: linear-gradient(to bottom, rgba(42,32,22,.92), rgba(26,20,16,.92));
+    border: 1px solid var(--line-hi); color: var(--ink); padding: 13px 0; font-size: 18px; letter-spacing: 8px; text-indent: 8px;
+    position: relative; transition: all .2s; box-shadow: 0 4px 14px rgba(0,0,0,.6); font-family: var(--kai);
+  }
+  .title-btn::before, .title-btn::after { content: ""; position: absolute; width: 7px; height: 7px; border: 1px solid var(--line-hi); transform: rotate(45deg); background: var(--bg2); }
+  .title-btn::before { left: -4px; top: -4px; } .title-btn::after { right: -4px; bottom: -4px; }
+  .title-btn:hover { border-color: var(--amber); color: var(--amber-hi); box-shadow: 0 0 22px rgba(224,170,69,.35); }
+  .title-btn.primary { border-color: var(--amber); color: var(--amber-hi); }
+  #title-screen .foot { position: absolute; bottom: 18px; color: rgba(176,155,116,.55); font-size: 12px; letter-spacing: 2px; z-index: 1; }
+  #title-screen .author { position: absolute; right: 28px; bottom: 24px; color: var(--amber-hi); font-family: var(--kai); font-size: 28px; letter-spacing: 6px; z-index: 1; text-shadow: 0 0 18px rgba(224,170,69,.55), 0 2px 6px #000; }
+
+  /* ================= 全局背景画 ================= */
+  #bg-art {
+    position: fixed; inset: -24px; z-index: 0; pointer-events: none; display: none;
+    background: url("assets/title-bg.png") center 25% / cover no-repeat;
+    filter: blur(7px) brightness(.30) saturate(.85);
+  }
+  #game { position: relative; z-index: 1; }
+
+  /* ================= 通用按钮 ================= */
+  .btn {
+    background: linear-gradient(to bottom, var(--panel2), var(--panel));
+    border: 1px solid var(--line); color: var(--ink); padding: 8px 16px; font-size: 14px;
+    transition: all .15s; letter-spacing: 1px;
+    box-shadow: inset 0 1px 0 rgba(234,217,184,.10), 0 2px 6px rgba(0,0,0,.45);
+  }
+  .btn:hover { border-color: var(--amber); color: var(--amber-hi); box-shadow: 0 0 12px rgba(224,170,69,.25); }
+  .btn.primary { border-color: var(--amber); color: var(--amber-hi); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn.exhausted, .btn.exhausted:hover {
+    background: #17120c; color: #6e6252; border-color: #33291d;
+    box-shadow: none; cursor: not-allowed; opacity: .85;
+  }
+
+  /* ================= 主界面 ================= */
+  #game { display: none; height: 100vh; grid-template-rows: 42px 1fr auto; grid-template-columns: 264px 1fr; }
+  #topbar {
+    grid-column: 1 / -1; display: flex; align-items: center; gap: 4px; padding: 0 12px;
+    background: linear-gradient(to bottom, rgba(24,17,10,.92), rgba(18,13,8,.88));
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(107,82,50,.6); box-shadow: 0 1px 14px rgba(0,0,0,.55); font-size: 14px; z-index: 6;
+  }
+  #topbar .brand { font-family: var(--kai); color: var(--amber); font-size: 16px; letter-spacing: 4px; text-shadow: 0 0 10px rgba(224,170,69,.35); margin-right: 8px; }
+  #topbar .spacer { flex: 1; }
+  #topbar button { background: none; border: 1px solid transparent; color: var(--ink-dim); padding: 5px 10px; font-size: 13px; letter-spacing: 1px; transition: all .15s; }
+  #topbar button:hover { color: var(--amber-hi); border-color: rgba(224,170,69,.4); box-shadow: 0 0 10px rgba(224,170,69,.15); }
+  #now-playing { color: var(--green); font-size: 12px; letter-spacing: 1px; display: none; animation: pulse 2.4s infinite; }
+  @keyframes pulse { 0%,100% { opacity: .65; } 50% { opacity: 1; } }
+
+  /* ============ 侧栏 · 角色卡 ============ */
+  #sidebar {
+    background: linear-gradient(to bottom, rgba(22,16,10,.88), rgba(16,11,6,.86));
+    backdrop-filter: blur(6px);
+    border-right: 1px solid rgba(107,82,50,.55); padding: 16px 14px 20px; overflow-y: auto; font-size: 14px;
+    position: relative; z-index: 5;
+  }
+  .portrait { width: 92px; height: 92px; margin: 2px auto 12px; position: relative; }
+  .portrait .diamond {
+    position: absolute; inset: 8px; transform: rotate(45deg);
+    border: 2px solid var(--line-hi); background: radial-gradient(circle at 40% 35%, #332413, #171009 78%);
+    box-shadow: 0 0 18px rgba(224,170,69,.22), inset 0 0 16px rgba(0,0,0,.7);
+  }
+  .portrait .diamond::after { content: ""; position: absolute; inset: 3px; border: 1px solid rgba(224,170,69,.28); }
+  .portrait span {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-family: var(--kai); font-size: 40px; color: var(--amber-hi); text-shadow: 0 0 16px rgba(224,170,69,.55);
+  }
+  .side-name { font-family: var(--kai); font-size: 20px; color: var(--amber-hi); letter-spacing: 3px; }
+  .side-lv { color: var(--ink-dim); font-size: 13px; margin-top: 2px; }
+  .orb-row { display: flex; gap: 14px; justify-content: center; margin: 12px 0 6px; }
+  .orb { width: 74px; height: 74px; border-radius: 50%; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid var(--line-hi); box-shadow: inset 0 0 18px rgba(0,0,0,.7), 0 0 14px rgba(0,0,0,.5); }
+  .orb.hp { background: radial-gradient(circle at 35% 30%, #8a4030, #3d140c 75%); }
+  .orb.mp { background: radial-gradient(circle at 35% 30%, #35536e, #101d2e 75%); }
+  .orb .v { font-size: 15px; font-weight: 700; text-shadow: 0 1px 3px #000; }
+  .orb .k { font-size: 11px; color: rgba(234,217,184,.75); letter-spacing: 2px; }
+  .mini-bars { margin-top: 10px; }
+  .bar { height: 9px; background: #0a0704; border: 1px solid var(--line); margin: 3px 0 7px; box-shadow: inset 0 1px 3px #000; }
+  .bar > div { height: 100%; transition: width .35s; }
+  .bar.sup > div { background: linear-gradient(to right, #5c7a3e, #86a95c); }
+  .bar-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-dim); letter-spacing: 1px; }
+  .stat-row { display: flex; justify-content: space-between; margin: 4px 0; }
+  .gold-v { color: var(--amber-hi); }
+  .side-sec { border-top: 1px solid var(--line); margin-top: 12px; padding-top: 9px; }
+  .side-sec h4 { color: var(--amber); font-size: 12px; letter-spacing: 4px; margin-bottom: 6px; text-align: center; position: relative; }
+  .side-sec h4::before, .side-sec h4::after { content: ""; position: absolute; top: 50%; width: 22%; height: 1px; background: var(--line); }
+  .side-sec h4::before { left: 0; } .side-sec h4::after { right: 0; }
+  .skill-line { color: var(--ink-dim); font-size: 13px; line-height: 1.7; }
+  .skill-line.un { color: var(--ink); }
+
+  /* ============ 主舞台：场景画铺满整个叙事区，画就是世界 ============ */
+  #main { position: relative; overflow: hidden; background: #0a0705; }
+  #scene-img {
+    position: absolute; inset: -3%; width: 106%; height: 106%; object-fit: cover; object-position: center 40%;
+    filter: saturate(.96) brightness(.88);
+    transition: opacity .9s ease;
+    animation: kenburns 42s ease-in-out infinite alternate;
+  }
+  @keyframes kenburns { from { transform: scale(1.0) translate(0, 0); } to { transform: scale(1.07) translate(-1.4%, -1.8%); } }
+  .atmo { position: absolute; inset: 0; pointer-events: none; transition: opacity .8s ease, background .8s ease; }
+  #atmo-vig { background: radial-gradient(ellipse at 50% 42%, transparent 46%, rgba(5,3,1,.52) 100%); z-index: 3; }
+  /* 时段光影 */
+  #atmo-time { z-index: 1; }
+  #main.seg-0 #atmo-time { background: linear-gradient(to bottom, rgba(190,200,225,.10), rgba(90,80,60,.06) 55%, rgba(30,22,12,.18)); }
+  #main.seg-2 #atmo-time { background: linear-gradient(to bottom, rgba(220,120,40,.16), rgba(140,60,20,.10) 55%, rgba(40,16,6,.26)); }
+  #main.seg-3 #atmo-time { background: linear-gradient(to bottom, rgba(10,16,48,.42), rgba(6,10,30,.38) 55%, rgba(2,4,14,.55)); }
+  /* 天气 */
+  #atmo-weather { z-index: 2; opacity: 0; overflow: hidden; }
+  #main.w-rain #atmo-weather {
+    opacity: .55;
+    background-image: repeating-linear-gradient(112deg, rgba(170,190,215,.13) 0 1px, transparent 1px 9px);
+    background-size: 200px 200px; animation: rain-fall .5s linear infinite;
+  }
+  @keyframes rain-fall { to { background-position: -60px 200px; } }
+  #main.w-fog #atmo-weather { opacity: 1; }
+  #main.w-fog #atmo-weather::before, #main.w-fog #atmo-weather::after {
+    content: ""; position: absolute; width: 130%; height: 70%; left: -15%;
+    background: radial-gradient(ellipse at center, rgba(200,205,210,.20), transparent 68%);
+    filter: blur(14px);
+  }
+  #main.w-fog #atmo-weather::before { top: 6%; animation: fog-drift 26s ease-in-out infinite alternate; }
+  #main.w-fog #atmo-weather::after { bottom: 8%; animation: fog-drift 34s ease-in-out infinite alternate-reverse; }
+  @keyframes fog-drift { from { transform: translateX(-6%); } to { transform: translateX(6%); } }
+  #main.w-cold #atmo-weather { opacity: 1; background: rgba(110,145,190,.13); backdrop-filter: saturate(.72) brightness(.96); }
+  /* 战斗压迫感：血色暗角脉冲 */
+  #atmo-combat { z-index: 4; opacity: 0;
+    background: radial-gradient(ellipse at center, transparent 48%, rgba(148,22,10,.46) 100%); }
+  #main.in-combat #atmo-combat { opacity: 1; animation: combat-pulse 1.7s ease-in-out infinite; }
+  @keyframes combat-pulse { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+  #main.in-combat #scene-img { filter: saturate(.82) brightness(.78) contrast(1.05); }
+
+  /* 地点牌匾（巫师式：到一地，亮一名） */
+  #scene-bar {
+    position: absolute; top: 20px; left: 24px; z-index: 5;
+    display: flex; flex-direction: column; gap: 2px;
+    background: linear-gradient(to right, rgba(16,11,6,.85), rgba(16,11,6,.55));
+    border: 1px solid rgba(107,82,50,.55); border-left: 3px solid var(--amber);
+    padding: 9px 22px 8px 14px; backdrop-filter: blur(5px);
+    box-shadow: 0 4px 18px rgba(0,0,0,.5);
+    animation: plaque-in .8s ease both;
+  }
+  @keyframes plaque-in { from { opacity: 0; transform: translateX(-14px); } to { opacity: 1; transform: none; } }
+  #scene-title { font-family: var(--kai); font-size: 24px; color: var(--amber-hi); letter-spacing: 7px; text-shadow: 0 0 16px rgba(224,170,69,.4), 0 2px 4px #000; }
+  #scene-sub { color: var(--ink-dim); font-size: 12.5px; letter-spacing: 2px; text-shadow: 0 1px 3px #000; }
+
+  /* ============ 装备槽 ============ */
+  .eq-row { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 3px 0; color: var(--ink-dim); }
+  .eq-row .slot-ic { color: var(--amber); display: inline-flex; }
+  .eq-row .eq-name { color: var(--ink); flex: 1; }
+  .eq-row .eq-none { flex: 1; font-style: italic; opacity: .55; }
+  .eq-row button { background: none; border: 1px solid var(--line); color: var(--ink-dim); font-size: 11px; padding: 1px 7px; }
+  .eq-row button:hover { border-color: var(--amber); color: var(--amber-hi); }
+  .eq-stat { color: var(--green); font-size: 12px; }
+
+  /* ============ 魔物图鉴卡 ============ */
+  .best-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .best-card { border: 1px solid var(--line); background: linear-gradient(to bottom, var(--panel2), var(--panel)); padding: 10px 12px; }
+  .best-card .bn { font-family: var(--kai); color: var(--amber-hi); font-size: 17px; letter-spacing: 2px; }
+  .best-card .bs { display: flex; gap: 12px; font-size: 12px; color: var(--ink-dim); margin: 3px 0 5px; flex-wrap: wrap; }
+  .best-card .bs b { color: var(--ink); font-weight: normal; }
+  .best-card .bl { font-size: 13px; color: var(--ink-dim); line-height: 1.65; }
+  .best-card .bd { font-size: 12px; margin-top: 5px; color: var(--green); }
+
+  /* ============ 龙骰 ============ */
+  .dice-table { text-align: center; padding: 6px 0 2px; }
+  .dice-vs { display: flex; justify-content: space-around; margin: 12px 0; }
+  .dice-side { flex: 1; }
+  .dice-side .who { font-size: 13px; color: var(--ink-dim); letter-spacing: 3px; margin-bottom: 6px; }
+  .dice-side .dice { font-size: 44px; letter-spacing: 6px; line-height: 1.2; color: var(--amber-hi); text-shadow: 0 2px 8px rgba(0,0,0,.7); }
+  .dice-side .sum { margin-top: 4px; font-size: 14px; color: var(--ink); }
+  .dice-rounds { display: flex; justify-content: center; gap: 8px; margin: 8px 0; }
+  .dice-rounds .rd { width: 14px; height: 14px; border: 1px solid var(--line-hi); transform: rotate(45deg); background: var(--bg2); }
+  .dice-rounds .rd.win { background: var(--amber); border-color: var(--amber-hi); box-shadow: 0 0 8px rgba(224,170,69,.6); }
+  .dice-rounds .rd.lose { background: #4a2c22; border-color: var(--red); }
+  .dice-msg { min-height: 26px; font-family: var(--kai); font-size: 16px; color: var(--ink); margin: 6px 0; }
+  .dice-bets { display: flex; justify-content: center; gap: 8px; margin: 8px 0 4px; align-items: center; }
+  .dice-bets .bet { border: 1px solid var(--line); background: var(--panel); color: var(--ink-dim); padding: 4px 14px; font-size: 14px; }
+  .dice-bets .bet.on { border-color: var(--amber); color: var(--amber-hi); box-shadow: 0 0 10px rgba(224,170,69,.25); }
+
+  /* ============ 锻造 ============ */
+  .craft-card { border: 1px solid var(--line); background: linear-gradient(to bottom, var(--panel2), var(--panel)); padding: 10px 13px; margin-bottom: 9px; }
+  .craft-card .cn { font-family: var(--kai); font-size: 17px; color: var(--amber-hi); letter-spacing: 2px; }
+  .craft-card .cs { font-size: 12px; color: var(--green); margin-left: 8px; }
+  .craft-card .cm { font-size: 13px; margin: 5px 0; display: flex; gap: 10px; flex-wrap: wrap; }
+  .craft-card .cm .ok { color: var(--green); }
+  .craft-card .cm .lack { color: var(--red); }
+  .craft-card .cd { font-size: 12px; color: var(--ink-dim); }
+
+  /* ============ 叙事窗：浮在画卷上的故事书 ============ */
+  #log {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 47%; z-index: 5;
+    overflow-y: auto; padding: 46px 40px 24px;
+    font-family: var(--kai); line-height: 2.05; font-size: 20px; letter-spacing: 1px;
+    background: linear-gradient(to top, rgba(8,5,3,.95) 0%, rgba(8,5,3,.91) 52%, rgba(8,5,3,.68) 78%, rgba(8,5,3,0) 100%);
+    backdrop-filter: blur(2.5px);
+    scrollbar-width: thin;
+  }
+  #log::-webkit-scrollbar { width: 6px; }
+  #log::-webkit-scrollbar-track { background: transparent; }
+  #log-inner { max-width: 800px; margin: 0 auto; white-space: pre-wrap; }
+  #log .entry {
+    text-shadow: 0 1px 3px rgba(0,0,0,.9), 0 0 26px rgba(0,0,0,.6);
+    animation: entry-in .5s ease both;
+  }
+  @keyframes entry-in { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
+  #log .entry.combat { border-left: 2px solid rgba(200,82,60,.85); padding-left: 13px; }
+  #log .entry.combat::first-line { color: #e8b7a8; }
+  #log .sys { color: var(--amber); font-size: 17px; }
+  #log .player-input { color: #8fb4d8; font-size: 17px; opacity: .95; }
+  #log .divider { display: flex; align-items: center; gap: 10px; margin: 15px 0; }
+  #log .divider::before, #log .divider::after { content: ""; flex: 1; height: 1px; background: linear-gradient(to right, transparent, var(--line), transparent); }
+  #log .divider span { display: inline-block; width: 8px; height: 8px; border: 1px solid var(--line-hi); transform: rotate(45deg); }
+
+  /* 名词词条 */
+  .lex { color: var(--amber-hi); border-bottom: 1px dashed rgba(224,170,69,.55); cursor: pointer; padding: 0 1px; transition: all .12s; }
+  .lex:hover { background: rgba(224,170,69,.18); text-shadow: 0 0 8px rgba(224,170,69,.5); }
+  .lex-type { display: inline-block; border: 1px solid var(--amber); color: var(--amber); font-size: 12px; padding: 1px 8px; letter-spacing: 2px; margin-bottom: 10px; }
+
+  /* 剧情选项按钮 */
+  #log .choices { display: flex; flex-direction: column; gap: 7px; margin: 12px 0 4px; }
+  #log .choices::before { content: "—— 你的抉择 ——"; text-align: center; font-size: 12px; letter-spacing: 4px; color: var(--ink-dim); }
+  #log .choice-btn {
+    display: flex; align-items: center; gap: 10px; text-align: left;
+    background: linear-gradient(to bottom, rgba(46,34,22,.88), rgba(28,21,15,.88));
+    border: 1px dashed rgba(224,170,69,.55); color: var(--ink);
+    padding: 10px 15px; font-size: 16.5px; font-family: var(--kai); letter-spacing: 1px;
+    transition: all .15s; box-shadow: 0 2px 8px rgba(0,0,0,.4);
+  }
+  #log .choice-btn svg { flex: 0 0 auto; color: var(--amber); }
+  #log .choice-btn:hover { border-style: solid; border-color: var(--amber-hi); color: var(--amber-hi); box-shadow: 0 0 14px rgba(224,170,69,.3); transform: translateX(5px); }
+  #log .choices.stale { opacity: .32; }
+  #log .choices.stale .choice-btn { cursor: default; transform: none; border-style: dashed; box-shadow: none; }
+
+  /* ============ 动作坞：快捷栏式 ============ */
+  #actions {
+    grid-column: 1 / -1;
+    background: linear-gradient(to top, rgba(20,14,8,.94), rgba(15,11,6,.90));
+    backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(107,82,50,.55); padding: 10px 20px 12px; display: flex; flex-direction: column; gap: 9px;
+    max-height: 178px; overflow-y: auto; box-shadow: 0 -3px 18px rgba(0,0,0,.55);
+    position: relative; z-index: 6;
+  }
+  #action-dock { display: flex; flex-wrap: wrap; gap: 8px 26px; align-items: flex-start; }
+  .act-group { display: flex; flex-direction: column; gap: 6px; }
+  .ag-label { font-size: 10.5px; letter-spacing: 4px; color: var(--ink-dim); opacity: .85; text-transform: uppercase; }
+  .g-combat .ag-label { color: var(--red); }
+  .g-quest .ag-label { color: var(--amber); }
+  .ag-btns { display: flex; flex-wrap: wrap; gap: 7px; max-width: 580px; }
+  .act-btn {
+    min-height: 38px; padding: 7px 15px; font-size: 14px; letter-spacing: 1.5px;
+    background: linear-gradient(to bottom, rgba(52,39,24,.9), rgba(32,23,14,.9));
+    border: 1px solid rgba(107,82,50,.65);
+    box-shadow: inset 0 1px 0 rgba(234,217,184,.08), 0 2px 7px rgba(0,0,0,.5);
+  }
+  .act-btn:hover { transform: translateY(-1px); border-color: var(--amber); box-shadow: 0 0 14px rgba(224,170,69,.3), 0 3px 9px rgba(0,0,0,.55); }
+  .g-combat .act-btn { border-color: rgba(160,70,50,.6); }
+  .g-combat .act-btn:hover { border-color: var(--red); box-shadow: 0 0 14px rgba(200,82,60,.35); }
+  .g-move .act-btn { border-style: dashed; }
+  #input-row { display: flex; gap: 9px; }
+  #input-row input {
+    flex: 1; background: rgba(10,7,4,.8); border: 1px solid rgba(107,82,50,.6); color: var(--ink);
+    padding: 10px 16px; font-size: 15.5px; font-family: var(--kai); letter-spacing: 1px;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,.55);
+  }
+  #input-row input:focus { outline: none; border-color: var(--amber); box-shadow: inset 0 2px 6px rgba(0,0,0,.55), 0 0 12px rgba(224,170,69,.18); }
+  #input-row .btn { min-height: 42px; padding: 0 26px; font-size: 15px; letter-spacing: 3px; }
+
+  /* ================= 弹层 ================= */
+  .modal-mask { position: fixed; inset: 0; background: rgba(5,3,1,.78); display: none; align-items: center; justify-content: center; z-index: 10; }
+  .modal { background: linear-gradient(to bottom, #261c11, #1d150d); border: 1px solid var(--line-hi); width: 660px; max-width: 94vw; max-height: 88vh; overflow-y: auto; padding: 22px 26px 26px; box-shadow: 0 0 60px rgba(0,0,0,.8), inset 0 0 40px rgba(0,0,0,.35); position: relative; }
+  .modal.wide { width: 1160px; max-width: 97vw; }
+  .modal::before { content: ""; position: absolute; inset: 5px; border: 1px solid rgba(74,56,35,.5); pointer-events: none; }
+  .modal h3 { font-family: var(--kai); color: var(--amber-hi); letter-spacing: 5px; margin-bottom: 14px; text-align: center; font-size: 21px; text-shadow: 0 0 14px rgba(224,170,69,.35); display: flex; align-items: center; gap: 14px; justify-content: center; }
+  .modal h3::before, .modal h3::after { content: ""; height: 1px; flex: 0 0 56px; background: linear-gradient(to right, transparent, var(--line-hi)); }
+  .modal h3::after { background: linear-gradient(to left, transparent, var(--line-hi)); }
+  .modal h4 { color: var(--amber); letter-spacing: 2px; margin: 14px 0 8px; font-size: 14px; }
+  .modal .close { position: absolute; top: 10px; right: 14px; background: none; border: none; color: var(--ink-dim); font-size: 19px; z-index: 2; }
+  .modal .close:hover { color: var(--amber-hi); }
+  .modal .lex-body { font-family: var(--kai); font-size: 16.5px; line-height: 2; }
+  .item-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 7px 2px; border-bottom: 1px solid rgba(74,56,35,.45); font-size: 14px; }
+  .item-row .ops { white-space: nowrap; }
+  .item-row .ops button { margin-left: 6px; background: none; border: 1px solid var(--line); color: var(--ink-dim); padding: 3px 9px; font-size: 12px; }
+  .item-row .ops button:hover { color: var(--amber-hi); border-color: var(--amber); }
+  .dim { color: var(--ink-dim); font-size: 13px; }
+  .quest-rank { color: var(--amber); }
+  .settings-row { display: flex; gap: 8px; align-items: center; margin: 8px 0; font-size: 14px; }
+  .settings-row input, .settings-row select { flex: 1; background: #120d07; border: 1px solid var(--line); color: var(--ink); padding: 7px 10px; font-family: inherit; }
+
+  /* 魔导书选择 */
+  .g-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 12px 0; }
+  .g-card { border: 1px solid var(--line); padding: 10px 12px; cursor: pointer; background: #171009; transition: all .15s; }
+  .g-card:hover { border-color: var(--line-hi); }
+  .g-card.sel { border-color: var(--amber); box-shadow: 0 0 14px rgba(224,170,69,.35); background: #20160b; }
+  .g-card .gn { color: var(--amber-hi); font-size: 15px; }
+  .g-card .gd { color: var(--ink-dim); font-size: 12px; margin-top: 3px; line-height: 1.6; }
+
+  /* 地图 */
+  .map-wrap { position: relative; border: 1px solid var(--line-hi); box-shadow: 0 0 30px rgba(0,0,0,.6); }
+  .map-wrap img { display: block; width: 100%; }
+  .map-marker { position: absolute; transform: translate(-50%, -100%); cursor: pointer; text-align: center; z-index: 2; }
+  .map-marker .pin { width: 14px; height: 14px; margin: 0 auto 2px; transform: rotate(45deg); border: 2px solid var(--amber); background: rgba(224,170,69,.85); box-shadow: 0 0 10px rgba(224,170,69,.8); }
+  .map-marker .nm { font-size: 15px; color: #fff8e8; text-shadow: 0 1px 3px #000, 0 0 8px #000; letter-spacing: 1px; white-space: nowrap; background: rgba(16,12,8,.55); padding: 1px 7px; }
+  .map-marker.locked .pin { border-color: #6e6252; background: rgba(110,98,82,.6); box-shadow: none; }
+  .map-marker.locked .nm { color: #b7ac99; }
+  .map-marker.here .nm { color: var(--amber-hi); border: 1px solid var(--amber); }
+  #map-info { margin-top: 10px; font-size: 14px; line-height: 1.9; min-height: 44px; }
+
+  /* 当前目标指引框 */
+  #ui-guide-box { margin-top: 12px; border: 1px solid rgba(224,170,69,.5); background: linear-gradient(135deg, rgba(224,170,69,.10), rgba(224,170,69,.03)); padding: 10px 12px; box-shadow: 0 0 16px rgba(224,170,69,.12), inset 0 0 20px rgba(0,0,0,.3); }
+  #ui-guide-box .gh { font-size: 11px; color: var(--amber); letter-spacing: 3px; margin-bottom: 5px; }
+  #ui-guide-box .gt { color: var(--amber-hi); font-size: 14px; letter-spacing: 1px; }
+  #ui-guide-box .gtag { display: inline-block; font-size: 11px; border: 1px solid var(--amber); color: var(--amber); padding: 0 6px; margin-right: 6px; letter-spacing: 1px; }
+  #ui-guide-box .gx { color: var(--ink-dim); font-size: 12.5px; line-height: 1.75; margin-top: 5px; }
+  /* 委托分区 */
+  .quest-sec { color: var(--amber); letter-spacing: 3px; font-size: 13px; margin: 14px 0 6px; border-left: 3px solid var(--amber); padding-left: 8px; }
+  .quest-sec.side { border-color: var(--blue); color: var(--ink-dim); }
+  .quest-sec.board { border-color: var(--line-hi); color: var(--ink-dim); }
+  .quest-main-badge { color: var(--amber-hi); border: 1px solid var(--amber); padding: 0 5px; font-size: 12px; }
+
+  /* 图标 */
+  #topbar button { display: inline-flex; align-items: center; gap: 6px; }
+  #topbar button svg { flex: 0 0 auto; }
+  .bar-label span:first-child, .stat-row span:first-child { display: inline-flex; align-items: center; gap: 6px; }
+  .bar-label svg, .stat-row svg { vertical-align: -2px; }
+  .ag-label { display: inline-flex; align-items: center; gap: 5px; }
+  .act-btn { display: inline-flex; align-items: center; gap: 5px; }
+  .itm-ic { vertical-align: -2px; margin-right: 2px; }
+
+  /* 区域小地图标记 */
+  .mm-marker { position: absolute; transform: translate(-50%, -100%); cursor: pointer; text-align: center; z-index: 2; }
+  .mm-marker .badge { width: 32px; height: 32px; border-radius: 50%; margin: 0 auto 3px; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 35% 30%, #3a2b18, #1c130a); border: 2px solid var(--amber); color: var(--amber-hi); box-shadow: 0 0 12px rgba(224,170,69,.55); }
+  .mm-marker .nm { font-size: 13.5px; color: #fff8e8; text-shadow: 0 1px 3px #000, 0 0 8px #000; letter-spacing: 1px; white-space: nowrap; background: rgba(16,12,8,.62); padding: 1px 7px; }
+  .mm-marker .fn { display: inline-block; font-size: 11.5px; color: var(--amber-hi); text-shadow: 0 1px 3px #000, 0 0 6px #000; white-space: nowrap; background: rgba(16,12,8,.48); padding: 0 6px; margin-top: 1px; letter-spacing: .5px; }
+  .mm-marker.spot .badge { width: 25px; height: 25px; border-color: var(--line-hi); box-shadow: 0 0 8px rgba(0,0,0,.6); }
+  .mm-marker.spot .nm { font-size: 12px; }
+  .mm-marker.spot .fn { font-size: 11px; }
+  .mm-marker.here .badge { border-color: #fff2d8; box-shadow: 0 0 16px rgba(245,201,107,.9); }
+  .mm-marker:hover .badge { border-color: var(--amber-hi); box-shadow: 0 0 16px rgba(224,170,69,.85); }
+
+  /* 世界观 / 人物卡 通用页签 */
+  .lore-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; justify-content: center; }
+  .lore-tabs button { background: #171009; border: 1px solid var(--line); color: var(--ink-dim); padding: 7px 14px; font-size: 13.5px; letter-spacing: 2px; display: inline-flex; gap: 6px; align-items: center; transition: all .15s; }
+  .lore-tabs button:hover { border-color: var(--line-hi); color: var(--ink); }
+  .lore-tabs button.on { border-color: var(--amber); color: var(--amber-hi); box-shadow: 0 0 12px rgba(224,170,69,.25); }
+  .lore-body { font-family: var(--kai); font-size: 16px; line-height: 2; }
+  .lore-body p { margin: 8px 0; }
+  .lore-quote { border-left: 3px solid var(--amber); padding: 8px 14px; margin: 12px 0; background: rgba(224,170,69,.06); color: var(--ink); }
+  .lore-tl { margin: 12px 0 6px 16px; padding-left: 26px; border-left: 1px solid var(--line-hi); }
+  .lore-tl .ev { position: relative; margin-bottom: 18px; }
+  .lore-tl .ev::before { content: ""; position: absolute; left: -31px; top: 8px; width: 9px; height: 9px; transform: rotate(45deg); background: var(--amber); box-shadow: 0 0 8px rgba(224,170,69,.8); }
+  .lore-tl .yr { color: var(--amber-hi); letter-spacing: 2px; font-size: 15px; }
+  .lore-tl .et { color: var(--ink-dim); font-size: 14px; line-height: 1.85; margin-top: 2px; }
+  .crest-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .crest { border: 1px solid var(--line); background: #171009; padding: 10px 12px; display: flex; gap: 12px; align-items: center; }
+  .crest .sigil { flex: 0 0 42px; width: 42px; height: 42px; transform: rotate(45deg); border: 2px solid; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0,0,0,.5); }
+  .crest .sigil span { transform: rotate(-45deg); font-family: var(--kai); font-size: 19px; }
+  .crest .cn { color: var(--ink); font-size: 14.5px; letter-spacing: 1px; }
+  .crest .cd { color: var(--ink-dim); font-size: 12.5px; margin-top: 2px; line-height: 1.6; }
+  .rank-row { display: flex; gap: 10px; align-items: center; padding: 7px 2px; border-bottom: 1px solid rgba(74,56,35,.4); font-size: 14.5px; }
+  .rank-badge { flex: 0 0 32px; text-align: center; border: 1px solid; font-weight: 700; padding: 2px 0; font-size: 15px; }
+  .elem-orbs { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 12px 0; }
+  .elem-orb { width: 66px; text-align: center; font-size: 13px; color: var(--ink); }
+  .elem-orb .o { width: 36px; height: 36px; border-radius: 50%; margin: 0 auto 5px; border: 2px solid var(--line-hi); box-shadow: inset 0 0 10px rgba(0,0,0,.6), 0 0 10px rgba(0,0,0,.5); }
+
+  /* 人物卡 */
+  .ppl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ppl-card { border: 1px solid var(--line); background: #171009; padding: 12px 14px; display: flex; gap: 12px; }
+  .ppl-card.locked { opacity: .55; }
+  .ppl-medal { flex: 0 0 56px; width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--amber); display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 35% 30%, #332413, #171009 78%); color: var(--amber-hi); box-shadow: 0 0 12px rgba(224,170,69,.3); }
+  .ppl-card.locked .ppl-medal { color: #6e6252; border-color: #33291d; box-shadow: none; }
+  .ppl-name { color: var(--amber-hi); font-size: 16px; font-family: var(--kai); letter-spacing: 1px; }
+  .ppl-role { color: var(--amber); font-size: 12px; margin-top: 2px; letter-spacing: 1px; }
+  .ppl-loc { color: var(--ink-dim); font-size: 12px; margin-top: 3px; display: flex; align-items: center; gap: 4px; }
+  .ppl-bio { color: var(--ink); font-size: 13.5px; line-height: 1.8; margin-top: 7px; font-family: var(--kai); }
+
+  /* 电台 */
+  .radio-row { display: flex; gap: 8px; align-items: center; margin: 8px 0; flex-wrap: wrap; }
+  .radio-now { border: 1px solid var(--line); padding: 8px 12px; background: #150f08; font-size: 14px; color: var(--green); min-height: 38px; display: flex; align-items: center; }
+  input[type=range] { accent-color: var(--amber); }
+</style>
+</head>
+<body>
+
+<!-- 全局背景画（进入游戏后显示） -->
+<div id="bg-art"></div>
+
+<!-- ============ 标题界面 ============ -->
+<div id="title-screen">
+  <h1>魔导纪元</h1>
+  <div class="sub">ASTRAEA · 魔法纪元 743 年</div>
+  <div class="quote">世界树枯死后的第七十二个冬天 —— 王都在远方，龙在更远方</div>
+  <div class="menu">
+    <button class="title-btn primary" id="continue-btn" style="display:none;">继续旅途</button>
+    <button class="title-btn" id="newgame-btn">踏上旅途</button>
+  </div>
+  <div class="foot">铜壶与龙息 · 烬炉镇 —— 每一个传奇，都曾是无名之辈</div>
+  <div class="author">作者：Lewis</div>
+</div>
+
+<!-- ============ 游戏主界面 ============ -->
+<div id="game">
+  <div id="topbar">
+    <span class="brand">魔导纪元</span>
+    <span id="now-playing"></span>
+    <span class="spacer"></span>
+    <button data-panel="inventory"><span data-ic="bag"></span>背包</button>
+    <button data-panel="map"><span data-ic="map"></span>地图</button>
+    <button data-panel="lore"><span data-ic="tree"></span>世界观</button>
+    <button data-panel="people"><span data-ic="people"></span>人物卡</button>
+    <button data-panel="quests"><span data-ic="scroll"></span>委托</button>
+    <button data-panel="discovery"><span data-ic="compass"></span>发现日志</button>
+    <button data-panel="grimoire"><span data-ic="book"></span>魔导书</button>
+    <button data-panel="radio"><span data-ic="speaker"></span>旅人电台</button>
+    <button data-panel="settings"><span data-ic="gear"></span>设置</button>
+    <button id="fs-btn" title="全屏 / 退出全屏"><span data-ic="expand"></span></button>
+  </div>
+  <div id="sidebar">
+    <div class="portrait"><div class="diamond"></div><span id="ui-portrait-char"></span></div>
+    <div style="text-align:center;">
+      <div class="side-name" id="ui-name"></div>
+      <div class="side-lv"><span id="ui-level"></span> · 经验 <span id="ui-exp"></span></div>
+    </div>
+    <div class="orb-row">
+      <div class="orb hp"><div class="v" id="ui-hp"></div><div class="k">生命</div></div>
+      <div class="orb mp"><div class="v" id="ui-mp"></div><div class="k">法力</div></div>
+    </div>
+    <div class="mini-bars">
+      <div class="bar-label"><span><span data-ic="bread"></span>干粮</span><span id="ui-food-v"></span></div>
+      <div class="bar sup"><div id="ui-foodbar"></div></div>
+      <div class="bar-label"><span><span data-ic="drop"></span>饮水</span><span id="ui-water-v"></span></div>
+      <div class="bar sup"><div id="ui-waterbar"></div></div>
+    </div>
+    <div class="stat-row"><span><span data-ic="coin"></span>金币</span><span class="gold-v" id="ui-gold"></span></div>
+    <div class="stat-row"><span><span data-ic="pack"></span>负重</span><span id="ui-weight"></span></div>
+    <div class="side-sec"><h4>装备</h4>
+      <div class="eq-row"><span class="slot-ic" data-ic="sword"></span><span id="ui-eq-weapon"></span></div>
+      <div class="eq-row"><span class="slot-ic" data-ic="shield"></span><span id="ui-eq-armor"></span></div>
+    </div>
+    <div id="ui-guide-box">
+      <div class="gh">✦ 当前目标</div>
+      <div><span class="gtag" id="ui-guide-tag">主线</span><span class="gt" id="ui-guide-title"></span></div>
+      <div class="gx" id="ui-guide-text"></div>
+    </div>
+    <div class="side-sec"><h4>魔导书</h4><div id="ui-grimoire"></div></div>
+    <div class="side-sec"><h4>同伴</h4><div id="ui-companion" class="dim" style="text-align:center;">无</div></div>
+    <div class="side-sec"><h4>战斗</h4><div id="ui-combat" class="dim" style="text-align:center;">—</div></div>
+  </div>
+  <div id="main">
+    <img id="scene-img" src="assets/scene-tavern.png" alt="">
+    <div class="atmo" id="atmo-time"></div>
+    <div class="atmo" id="atmo-weather"></div>
+    <div class="atmo" id="atmo-vig"></div>
+    <div class="atmo" id="atmo-combat"></div>
+    <div id="scene-bar"><span id="scene-title"></span><span id="scene-sub"></span></div>
+    <div id="log"><div id="log-inner"></div></div>
+  </div>
+  <div id="actions">
+    <div id="action-dock"></div>
+    <div id="input-row">
+      <input id="cmd-input" placeholder="输入行动（如：探索 / 扎营 / 前往林间空地 / 听大新闻……）">
+      <button class="btn primary" id="send-btn">行动</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 弹层 ============ -->
+<div class="modal-mask" id="modal-mask"><div class="modal">
+  <button class="close" id="modal-close">✕</button>
+  <div id="modal-body"></div>
+</div></div>
+
+<script src="bundle.js"></script>
+<script src="engine/state.js"></script>
+<script src="engine/rules.js"></script>
+<script src="engine/llm.js"></script>
+<script src="engine/game.js"></script>
+<script>
+(function () {
+  const A = window.ASTREA, St = A.State, Game = A.Game, LLM = A.LLM;
+  const $ = id => document.getElementById(id);
+
+  /* ================= 图标库（内联 SVG，描边风格） ================= */
+  const ICONS = {
+    bag: '<path d="M5 8h14l-1.5 12h-11L5 8z"/><path d="M9 8a3 3 0 0 1 6 0"/>',
+    map: '<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2V6z"/><path d="M9 4v14M15 6v14"/>',
+    scroll: '<path d="M8 4h9a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H8"/><path d="M8 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2"/><path d="M8 4v16"/><path d="M11 9h5M11 13h5"/>',
+    compass: '<circle cx="12" cy="12" r="9"/><path d="M15 9l-2 5-4 1 2-5 4-1z"/>',
+    book: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5z"/><path d="M4 19a2 2 0 0 1 2-2h13"/><path d="M9 7h6"/>',
+    lyre: '<path d="M7 4v8a5 5 0 0 0 10 0V4"/><path d="M5 4h14"/><path d="M12 12v8"/><path d="M9 20h6"/>',
+    gear: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>',
+    tree: '<circle cx="12" cy="8" r="5"/><path d="M12 13v8M7 21h10"/><path d="M12 8c-2.5 0-4.5-2-4.5-4.5C10 3.5 12 5.5 12 8zM12 8c2.5 0 4.5-2 4.5-4.5C14 3.5 12 5.5 12 8z"/>',
+    people: '<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.4"/><path d="M15.5 14.5A5 5 0 0 1 21 19"/>',
+    expand: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+    contract: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>',
+    bread: '<path d="M5 9a7 4 0 0 1 14 0v8a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V9z"/><path d="M9 13h.01M12 15h.01M15 13h.01"/>',
+    drop: '<path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/>',
+    coin: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/>',
+    pack: '<path d="M8 7V6a4 4 0 0 1 8 0v1"/><rect x="5" y="7" width="14" height="13" rx="2"/><path d="M5 12h14"/>',
+    sword: '<path d="M5 19 19 5"/><path d="M19 5l-3 1M19 5l-1 3"/><path d="M7 15l2 2"/><path d="M4 20l2-2"/>',
+    chat: '<path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4V6z"/>',
+    boot: '<path d="M7 3v10l-3 3v5h13v-3l-6-2-4-4V3H7z"/>',
+    arrow: '<path d="M4 12h14"/><path d="M13 6l6 6-6 6"/>',
+    home: '<path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-6h4v6"/>',
+    anvil: '<path d="M4 7h16v3c-4 0-6 2-6 4h-4c0-2-2-4-6-4V7z"/><path d="M10 14v4M7 20h10"/>',
+    shop: '<path d="M5 9l1-4h12l1 4"/><path d="M5 9v11h14V9"/><path d="M9 20v-6h6v6"/>',
+    board: '<rect x="5" y="4" width="14" height="11"/><path d="M9 15v5M15 15v5"/><path d="M8 8h8M8 11h5"/>',
+    gate: '<path d="M5 20V9l7-5 7 5v11"/><path d="M5 20h14"/><path d="M12 20v-8"/>',
+    tower: '<path d="M8 21V8l-2-2 2-3h8l2 3-2 2v13"/><path d="M8 21h8"/><path d="M10 12h4"/>',
+    cave: '<path d="M3 20c0-8 4-14 9-14s9 6 9 14"/><path d="M8 20c0-4 1.5-7 4-7s4 3 4 7"/>',
+    shrine: '<path d="M4 9l8-6 8 6"/><path d="M6 9v11M18 9v11"/><path d="M4 20h16"/><path d="M12 13v4"/>',
+    fog: '<path d="M4 9h16M6 13h12M4 17h16"/>',
+    flame: '<path d="M12 3c1 4 6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 5-7 6-11z"/>',
+    mountain: '<path d="M3 19 9 7l4 6 3-4 5 10H3z"/>',
+    eye: '<path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.5"/>',
+    gem: '<path d="M7 4h10l3 5-8 11L4 9l3-5z"/><path d="M4 9h16"/><path d="M12 20 9 9M12 20l3-11"/>',
+    flask: '<path d="M10 3h4"/><path d="M11 3v5l-5 9a3 3 0 0 0 3 4h6a3 3 0 0 0 3-4l-5-9V3"/><path d="M8 14h8"/>',
+    ore: '<path d="M6 5l7-2 6 6-2 8-7 3-6-6 2-9z"/>',
+    hammer: '<path d="M13 4l7 7-3 3-7-7 3-3z"/><path d="M10 11 4 17l3 3 6-6"/>',
+    lock: '<rect x="6" y="11" width="12" height="9"/><path d="M9 11V8a3 3 0 0 1 6 0v3"/><circle cx="12" cy="15.5" r="1.2"/>',
+    star: '<path d="M12 3l2.6 5.6L20 9.4l-4 4 1 5.8-5-2.8-5 2.8 1-5.8-4-4 5.4-.8L12 3z"/>',
+    leaf: '<path d="M5 19C5 9 11 4 20 4c0 9-5 15-15 15z"/><path d="M5 19c3-6 7-9 11-11"/>',
+    shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/>',
+    hourglass: '<path d="M7 3h10M7 21h10"/><path d="M8 3v3c0 3 4 4 4 6s-4 3-4 6v3M16 3v3c0 3-4 4-4 6s4 3 4 6v3"/>',
+    question: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.8.3-1 .8-1 1.7"/><path d="M12 16.5h.01"/>',
+    tent: '<path d="M12 4 3 20h18L12 4z"/><path d="M12 12l-3 8h6l-3-8z"/>',
+    speaker: '<path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a8 8 0 0 1 0 11"/>',
+    dice: '<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h.01M15 9h.01M12 12h.01M9 15h.01M15 15h.01"/>'
+  };
+  function ic(name, size) {
+    size = size || 14;
+    return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[name] || ""}</svg>`;
+  }
+  // 静态图标水合：<span data-ic="bag"></span> → SVG
+  document.querySelectorAll("[data-ic]").forEach(el => { el.innerHTML = ic(el.dataset.ic, 14); });
+
+  /* ================= 全屏模式 ================= */
+  $("fs-btn").onclick = () => {
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    else document.documentElement.requestFullscreen().catch(() => {});
+  };
+  document.addEventListener("fullscreenchange", () => {
+    const sp = $("fs-btn").querySelector("span");
+    if (sp) sp.innerHTML = ic(document.fullscreenElement ? "contract" : "expand", 14);
+  });
+
+  /* ================= 标题界面 ================= */
+  let chosenElement = "fire";
+  if (St.hasSave()) $("continue-btn").style.display = "";
+  $("continue-btn").onclick = () => {
+    if (!St.load()) { alert("存档读取失败，请开始新游戏。"); return; }
+    enterGame();
+    print("（你回到了旅途中。）", true);
+    render();
+  };
+  $("newgame-btn").onclick = () => openGrimoireModal();
+
+  function openGrimoireModal() {
+    const cards = A.DATA.grimoires.elements.map(el => {
+      const b = A.DATA.grimoires.books[el];
+      return `<div class="g-card ${el === chosenElement ? "sel" : ""}" data-el="${el}">
+        <div class="gn">${A.DATA.grimoires.element_names[el]} · ${b.name}</div>
+        <div class="gd">${b.pages.map(p => p.name).join(" → ")}</div>
+        <div class="gd" style="margin-top:4px">${b.pages[0].desc}</div></div>`;
+    }).join("");
+    showModal(`<h3>选择你的魔导书</h3>
+      <div class="dim" style="text-align:center">每个觉醒者生来绑定一本魔导书，它将决定你一生魔法的大方向。<br>人死书散，不可更换——慎重。</div>
+      <div class="settings-row" style="margin-top:12px"><span style="width:60px">名字</span><input id="name-input" placeholder="无名者" maxlength="12"></div>
+      <div class="g-grid">${cards}</div>
+      <div style="text-align:center;margin-top:6px"><button class="btn primary" id="start-btn" style="font-size:16px;padding:10px 34px;letter-spacing:6px;">觉醒</button></div>
+      <div class="dim" style="text-align:center;margin-top:14px;letter-spacing:4px;">作者：Lewis</div>`);
+    document.querySelectorAll(".g-card").forEach(c => c.onclick = () => {
+      chosenElement = c.dataset.el;
+      document.querySelectorAll(".g-card").forEach(x => x.classList.remove("sel"));
+      c.classList.add("sel");
+    });
+    $("start-btn").onclick = () => {
+      St.newGame($("name-input").value.trim() || "无名者", chosenElement);
+      Game.refreshBoard();
+      St.save();
+      $("modal-mask").style.display = "none";
+      enterGame();
+      print("烬炉镇的清晨有打铁声和面包香。你在「铜壶与龙息」的阁楼醒来，左手手背上，魔导书的烙印微微发热——「" + A.DATA.grimoires.books[chosenElement].name + "」，它选了你。\n玛尔塔在楼下喊：\"醒了就下来吃饭！吃饱了——天大的事再说。\"", true);
+      render();
+    };
+  }
+
+  function enterGame() {
+    $("title-screen").style.display = "none";
+    $("bg-art").style.display = "block";
+    $("game").style.display = "grid";
+    Radio.autoplay(); // 进游戏即开播（随机顺序），旅人的世界先有声音
+  }
+
+  /* ================= 名词词条 ================= */
+  let LEX_TERMS = null; // [ [surfaceTerm, entry], ... ] 按词长降序，长词优先避免嵌套误配
+  function lexTerms() {
+    if (LEX_TERMS) return LEX_TERMS;
+    const map = new Map();
+    for (const e of (A.DATA.lexicon || [])) {
+      for (const t of e.terms) if (!map.has(t)) map.set(t, e);
+    }
+    LEX_TERMS = [...map.entries()].sort((a, b) => b[0].length - a[0].length);
+    return LEX_TERMS;
+  }
+  function escapeHtml(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function wrapLexicon(escaped) {
+    let out = escaped;
+    const used = []; // { entry, term }
+    for (const [term, entry] of lexTerms()) {
+      if (!out.includes(term)) continue;
+      const tok = "\u0001" + used.length + "\u0001";
+      out = out.split(term).join(tok);
+      used.push({ entry, term });
+    }
+    return out.replace(/\u0001(\d+)\u0001/g, (m, i) => {
+      const u = used[+i];
+      return `<span class="lex" data-name="${u.entry.name}">${u.term}</span>`;
+    });
+  }
+  function openLexiconCard(name) {
+    const e = (A.DATA.lexicon || []).find(x => x.name === name);
+    if (!e) return;
+    showModal(`<h3>${e.name}</h3><div style="text-align:center"><span class="lex-type">${e.type}</span></div><div class="lex-body">${e.desc}</div>`);
+  }
+
+  /* ================= 叙事输出 ================= */
+  function print(text, isSys) {
+    const inner = $("log-inner");
+    const div = document.createElement("div");
+    const combatTxt = /遭遇战斗|【战斗胜利】|倒下了|发起了猎杀|反击|逃出了战斗|受到了|造成了|命中/.test(text || "");
+    div.className = "entry" + (isSys ? " sys" : "") + (combatTxt ? " combat" : "");
+    if (isSys) div.textContent = text;
+    else div.innerHTML = wrapLexicon(escapeHtml(text));
+    inner.appendChild(div);
+    const hr = document.createElement("div");
+    hr.className = "divider"; hr.innerHTML = "<span></span>";
+    inner.appendChild(hr);
+    $("log").scrollTop = $("log").scrollHeight;
+  }
+  // 点击叙事中的专有名词 → 弹出信息卡
+  $("log").addEventListener("click", e => {
+    const sp = e.target.closest(".lex");
+    if (sp) openLexiconCard(sp.dataset.name);
+  });
+
+  /* ================= 渲染 ================= */
+  function render() {
+    const s = St.get(); if (!s) return;
+    const p = s.player;
+    const ndef = Game.nodeDef(p.location.region, p.location.node);
+    $("scene-title").textContent = ndef.name;
+    $("scene-sub").textContent = Game.regionName(p.location.region) + " · " + St.timeName() + " · 天气 " + Game.weatherName(s.weather) + " · " + St.repTitle() + "（声望 " + p.reputation + "）";
+    // 换地点时牌匾重新滑入
+    const sbar = $("scene-bar"), locKey = p.location.region + "/" + p.location.node;
+    if (sbar.dataset.loc !== locKey) {
+      sbar.dataset.loc = locKey;
+      sbar.style.animation = "none"; void sbar.offsetWidth; sbar.style.animation = "";
+    }
+    // 场景画幅：换地方就换画（酒馆有专属内景）
+    const sceneKey = (p.location.region === "ashford" && p.location.node === "tavern") ? "tavern" : p.location.region;
+    const sceneSrc = "assets/scene-" + sceneKey + ".png";
+    const simg = $("scene-img");
+    if (!simg.getAttribute("src").endsWith("scene-" + sceneKey + ".png")) {
+      simg.style.opacity = 0;
+      const pre = new Image();
+      pre.onload = () => { simg.src = sceneSrc; simg.style.opacity = 1; };
+      pre.onerror = () => { simg.src = sceneSrc; simg.style.opacity = 1; };
+      pre.src = sceneSrc;
+    }
+    // 氛围层：时段 × 天气 × 战斗态，全写在画面的光影上
+    const main = $("main");
+    main.className = "seg-" + (s.timeSeg || 0) + " w-" + (s.weather || "clear") + (Game.combat ? " in-combat" : "");
+    // 装备槽
+    for (const slot of ["weapon", "armor"]) {
+      const cur = p.equipment && p.equipment[slot];
+      const el = $("ui-eq-" + slot);
+      if (cur && A.DATA.items[cur]) {
+        const d = A.DATA.items[cur];
+        el.innerHTML = `<span class="eq-name">${d.name}</span><span class="eq-stat">${slot === "weapon" ? "攻+" + d.atk : "防+" + d.def}</span><button onclick="UI.unequip('${slot}')">卸下</button>`;
+      } else {
+        el.innerHTML = `<span class="eq-none">${slot === "weapon" ? "武器：徒手" : "护甲：布衣"}</span>`;
+      }
+    }
+    $("ui-portrait-char").textContent = (p.name || "无").slice(0, 1);
+    $("ui-name").textContent = p.name;
+    $("ui-level").textContent = "Lv." + p.level;
+    $("ui-exp").textContent = p.exp + "/" + (p.level * 60);
+    $("ui-hp").textContent = p.hp + "/" + p.maxHp;
+    $("ui-mp").textContent = p.mp + "/" + p.maxMp;
+    $("ui-foodbar").style.width = (p.food / 10 * 100) + "%";
+    $("ui-waterbar").style.width = (p.water / 10 * 100) + "%";
+    $("ui-food-v").textContent = p.food + "/10";
+    $("ui-water-v").textContent = p.water + "/10";
+    $("ui-gold").textContent = p.gold;
+    $("ui-weight").textContent = p.inventory.length + "/20";
+    const gi = Game.guideInfo();
+    $("ui-guide-tag").textContent = gi.tag;
+    $("ui-guide-title").textContent = gi.title;
+    $("ui-guide-text").textContent = gi.text;
+    const book = A.DATA.grimoires.books[p.grimoire.element];
+    $("ui-grimoire").innerHTML = "<div style='text-align:center'>" + book.name + "</div>" +
+      book.pages.map(pg => p.level >= pg.unlock_lvl
+        ? `<div class="skill-line un">第${pg.page}页 · ${pg.name}</div>`
+        : `<div class="skill-line" style="opacity:.38">第${pg.page}页 · 未翻开（Lv.${pg.unlock_lvl}）</div>`).join("");
+    $("ui-companion").textContent = p.companions.with ? A.DATA.npcs[p.companions.with].name + " 同行中" : "无";
+    $("ui-combat").innerHTML = Game.combat
+      ? `<span style="color:var(--red)">${Game.combat.displayName}</span><br>HP ${Game.combat.hp} / ${Game.combat.maxHp}`
+      : "—";
+    renderActions();
+  }
+
+  /* ============ 动作坞：按 战斗/交涉/委托/行动/移动 分组 ============ */
+  const ACTION_GROUPS = [
+    { name: "战斗", cls: "g-combat", icon: "sword",  match: a => a.id.indexOf("combat_") === 0 || a.id === "elite_fight" },
+    { name: "交涉", cls: "g-talk",   icon: "chat",   match: a => ["talk", "introduce", "invite", "dismiss"].includes(a.id) },
+    { name: "委托", cls: "g-quest",  icon: "scroll", match: a => ["turnin", "accept_quest", "decline_offer", "deserter_catch", "deserter_free"].includes(a.id) },
+    { name: "行动", cls: "g-act",    icon: "boot",   match: a => ["explore", "camp", "rest", "news", "hone", "shop", "board", "dice", "craft", "armory"].includes(a.id) },
+    { name: "移动", cls: "g-move",   icon: "arrow",  match: a => a.id === "move" }
+  ];
+  const ACT_ICON = {
+    move: "arrow", talk: "chat", introduce: "people", invite: "people", dismiss: "people",
+    turnin: "scroll", accept_quest: "scroll", decline_offer: "arrow",
+    explore: "eye", camp: "tent", rest: "home", news: "lyre", hone: "anvil", shop: "shop", board: "board",
+    dice: "dice", craft: "anvil", armory: "sword", elite_fight: "sword",
+    deserter_catch: "shield", deserter_free: "arrow",
+    combat_attack: "sword", combat_skill: "star", combat_item: "flask", combat_flee: "arrow"
+  };
+  function renderActions() {
+    const dock = $("action-dock");
+    dock.innerHTML = "";
+    const acts = Game.availableActions();
+    for (const g of ACTION_GROUPS) {
+      const list = acts.filter(g.match);
+      if (!list.length) continue;
+      const sec = document.createElement("div");
+      sec.className = "act-group " + g.cls;
+      const lb = document.createElement("span");
+      lb.className = "ag-label"; lb.innerHTML = ic(g.icon, 12) + g.name;
+      sec.appendChild(lb);
+      const row = document.createElement("div");
+      row.className = "ag-btns";
+      for (const act of list) {
+        const b = document.createElement("button");
+        b.className = "btn act-btn";
+        b.innerHTML = (ACT_ICON[act.id] ? ic(ACT_ICON[act.id], 12) : "") + act.label;
+        if (act.disabled) { b.disabled = true; b.classList.add("exhausted"); }
+        else b.onclick = () => dispatch(act);
+        row.appendChild(b);
+      }
+      sec.appendChild(row);
+      dock.appendChild(sec);
+    }
+  }
+
+  function dispatch(act) {
+    staleChoices(); // 玩家改用按钮行动，旧的文字选项失效
+    if (act.id === "shop") return openShop(act.payload);
+    if (act.id === "board") return openBoard();
+    const res = Game.doAction(act);
+    if (res && typeof res === "object") {
+      if (res.openShop) return openShop(res.openShop);
+      if (res.openBoard) return openBoard();
+      if (res.openPanel) return openPanel(res.openPanel);
+      if (res.openDice) return openDice();
+      if (res.openCraft) return openCraft();
+    }
+    if (typeof res === "string" && res) print(res);
+    render();
+  }
+
+  /* ================= 剧情选项按钮 ================= */
+  function staleChoices() {
+    document.querySelectorAll("#log-inner .choices").forEach(box => {
+      box.classList.add("stale");
+      box.querySelectorAll("button").forEach(b => { b.disabled = true; b.onclick = null; });
+    });
+  }
+  function printChoices(choices) {
+    if (!choices || !choices.length) return;
+    const inner = $("log-inner");
+    const box = document.createElement("div");
+    box.className = "choices";
+    for (const c of choices) {
+      const b = document.createElement("button");
+      b.className = "choice-btn";
+      b.innerHTML = ic("arrow", 13) + "<span>" + escapeHtml(c) + "</span>";
+      b.onclick = () => submitText(c);
+      box.appendChild(b);
+    }
+    inner.appendChild(box);
+    $("log").scrollTop = $("log").scrollHeight;
+  }
+
+  /* ================= 输入 ================= */
+  function send() {
+    const input = $("cmd-input");
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = "";
+    submitText(text);
+  }
+  async function submitText(text) {
+    staleChoices(); // 旧选项即刻失效，剧情只向前
+    const div = document.createElement("div");
+    div.className = "player-input";
+    div.textContent = "＞ " + text;
+    $("log-inner").appendChild(div);
+    const cfg = LLM.getSettings();
+    if (cfg.mode === "api" && cfg.apiKey) {
+      print("（远方的叙事者正在落笔……）", true);
+      try {
+        const res = await Game.handleApiText(text);
+        print(res.text);
+        if (res.choices && res.choices.length) printChoices(res.choices);
+      } catch (e) {
+        let em = e.message || "";
+        if (/401|Authentication|invalid.*key/i.test(em)) em = "API Key 无效或已过期（401）——到设置页用「测试连接」排查";
+        else if (/Failed to fetch|NetworkError|Load failed/i.test(em)) em = "连不上 API 服务器——检查 Base URL 是否完整、网络是否正常";
+        else if (/model|Model|404/.test(em)) em = "模型名有误——DeepSeek 应填 deepseek-chat（设置页有常用模型名对照）";
+        else if (/402|balance|quota|insufficient/i.test(em)) em = "API 账户余额不足——充值后重试";
+        print("叙事通道中断：" + em + "（本次输入已按离线模式处理）", true);
+        const res = Game.handleOfflineText(text);
+        if (typeof res === "string") print(res); else if (res.openShop) openShop(res.openShop); else if (res.openBoard) openBoard(); else if (res.openPanel) openPanel(res.openPanel);
+      }
+    } else {
+      const res = Game.handleOfflineText(text);
+      if (typeof res === "string") print(res);
+      else if (res.openShop) openShop(res.openShop);
+      else if (res.openBoard) openBoard();
+      else if (res.openPanel) openPanel(res.openPanel);
+    }
+    render();
+  }
+  $("send-btn").onclick = send;
+  $("cmd-input").addEventListener("keydown", e => { if (e.key === "Enter") send(); });
+
+  /* ================= 弹层 ================= */
+  $("modal-close").onclick = () => $("modal-mask").style.display = "none";
+  $("modal-mask").addEventListener("click", e => { if (e.target === $("modal-mask")) $("modal-mask").style.display = "none"; });
+  function showModal(html, wide) {
+    $("modal-body").innerHTML = html;
+    document.querySelector("#modal-mask .modal").classList.toggle("wide", !!wide);
+    $("modal-mask").style.display = "flex";
+  }
+
+  document.querySelectorAll("#topbar button[data-panel]").forEach(b => {
+    b.onclick = () => openPanel(b.dataset.panel);
+  });
+
+  /* ================= 面板 ================= */
+  const ITEM_ICON = { supply: "bread", consumable: "flask", material: "ore", tool: "hammer", quest: "scroll", treasure: "gem" };
+  const ITEM_ICON_BY_ID = { ration: "bread", water_skin: "drop", torch: "flame", rope: "pack", potion_heal: "flask", potion_mana: "drop", moonlute: "lyre", dragon_scale_shard: "gem", moss_stanch: "leaf", moss_moon: "leaf", herb_mist: "leaf", storm_moss: "leaf" };
+  function itemIcon(id) {
+    const d = A.DATA.items[id];
+    return `<span class="itm-ic">${ic(ITEM_ICON_BY_ID[id] || ITEM_ICON[d ? d.type : ""] || "bag", 13)}</span>`;
+  }
+  function openPanel(panel) {
+    const p = St.get().player;
+    if (panel === "inventory") {
+      const rows = p.inventory.map(s => {
+        const d = A.DATA.items[s.id];
+        const usable = d && d.effect && d.type !== "tool";
+        const equipable = d && d.type === "equip";
+        const sellable = d && d.type !== "quest" && d.price;
+        const atHome = p.location.region === "ashford" && p.location.node === "tavern";
+        const stat = equipable ? `（${d.slot === "weapon" ? "攻击 +" + d.atk : "防御 +" + d.def}）` : "";
+        return `<div class="item-row"><span>${itemIcon(s.id)}${d ? d.name : s.id} ×${s.n}${stat} <span class="dim">${d ? d.desc : ""}</span></span>
+          <span class="ops">${usable ? `<button onclick="UI.invAct('use','${s.id}')">使用</button>` : ""}
+          ${equipable ? `<button onclick="UI.invAct('equip','${s.id}')">装备</button>` : ""}
+          ${sellable ? `<button onclick="UI.invAct('sell','${s.id}')">卖出</button>` : ""}
+          ${atHome ? `<button onclick="UI.invAct('deposit','${s.id}')">存入</button>` : ""}</span></div>`;
+      }).join("") || "<div class='dim'>背包空空如也。</div>";
+      const storage = (p.location.region === "ashford" && p.location.node === "tavern")
+        ? "<h4>家中仓库（" + p.storage.length + "/40）</h4>" +
+          (p.storage.map(s => { const d = A.DATA.items[s.id];
+            return `<div class="item-row"><span>${d ? d.name : s.id} ×${s.n}</span><span class="ops"><button onclick="UI.invAct('withdraw','${s.id}')">取出</button></span></div>`; }).join("") || "<div class='dim'>仓库是空的。</div>")
+        : "";
+      showModal("<h3>背包（" + p.inventory.length + "/20）</h3>" + rows + storage);
+    }
+    if (panel === "map") {
+      const disc = p.discovery.locations;
+      const here = p.location.region;
+      const MK = [
+        { id: "ashford",       nm: "烬炉镇",   x: 81, y: 55, play: true, info: "边境小镇，你的家。铜壶与龙息的壁炉永远给你留着位置。" },
+        { id: "mistwood",      nm: "雾帷森林", x: 52, y: 22, play: true, info: "终年轻雾的古林（危险度 D/C）。狼群、药草、猎户小屋。走得越急，迷得越深。" },
+        { id: "lavarift",      nm: "熔痕裂谷", x: 76, y: 30, play: true, info: "大地的热伤（危险度 C/B）。火纹矿、矿工营地，以及压低声音的灰烬会传闻。" },
+        { id: "thunderpass",   nm: "雷鸣山口", x: 20, y: 18, play: true, info: "风暴盘踞的山口（危险度 B）。雷鹰在崖顶筑巢，山龛里的老人守着比国家更旧的誓约。" },
+        { id: "westwatch",     nm: "西林哨所", x: 12, y: 38, play: true, info: "王国西陲的军镇（危险度 C）。百夫长卫霜在这里盯着西境的每一缕烟。" },
+        { id: "capital",       nm: "圣辉城",   x: 56, y: 45, locked: true, info: "魔法帝与八大骑士团驻地。八座尖塔在所有人嘴里——辉门查验纹章，你现在进不去。但它就在那儿，总有一天。" },
+        { id: "mirror_lake",   nm: "镜湖",     x: 34, y: 48, locked: true, info: "吟游诗人的故乡。据说湖水能照见人心里的事。没人说得出确切的路。" },
+        { id: "dragon_wastes", nm: "龙眠荒原", x: 90, y: 21, locked: true, info: "S 级禁区。地图上是一片骷髅标记。任何劝阻你前往的人，都是对的。" },
+        { id: "whitesail",     nm: "白帆城",   x: 15, y: 78, locked: true, info: "南岸的港城，船帆比屋顶多。海那边的事，只有水手说得清。" },
+        { id: "windgrass",     nm: "风语草原", x: 14, y: 54, locked: true, info: "草浪会传话的地方。游牧部落在风里扎营，也在风里消失。" },
+        { id: "ashenfen",      nm: "灰潮沼泽", x: 60, y: 68, locked: true, info: "西境战争的老战场。雾里有不肯散去的名字。" },
+        { id: "royal_tomb",    nm: "苍岩王陵", x: 37, y: 12, locked: true, info: "旧王朝的长眠之地。守陵人的灯，七十年没灭过。" }
+      ];
+      const markers = MK.map(m => {
+        const known = disc.some(l => l.startsWith(m.id + "/"));
+        const cls = m.locked && !known ? "locked" : "";
+        const hereCls = (here === m.id) ? "here" : "";
+        return `<div class="map-marker ${cls} ${hereCls}" style="left:${m.x}%;top:${m.y}%" data-rid="${m.id}" data-play="${m.play ? 1 : 0}" data-info="${m.info.replace(/"/g, "&quot;")}">
+          <div class="pin"></div><div class="nm">${m.nm}${m.locked ? "（未至）" : ""}</div></div>`;
+      }).join("");
+      showModal(`<h3>阿斯特雷亚 · 舆图</h3>
+        <div class="map-wrap"><img src="assets/map.png" alt="阿斯特雷亚大陆舆图">${markers}</div>
+        <div id="map-info" class="dim">点选金色地名进入该区域的小地图；灰色地名为未至之地，点选查看传闻。</div>`, true);
+      document.querySelectorAll(".map-marker").forEach(mk => mk.onclick = () => {
+        if (mk.dataset.play === "1") return openRegionMap(mk.dataset.rid);
+        $("map-info").textContent = mk.dataset.info;
+        $("map-info").className = "";
+      });
+    }
+    if (panel === "quests") {
+      const active = p.quests.filter(q => q.state !== "done");
+      const mains = active.filter(q => { const d = Game.questDef(q.id); return d && d.series === "main"; });
+      const sides = active.filter(q => { const d = Game.questDef(q.id); return d && d.series === "side"; });
+      const row = (q, isMain) => {
+        const d = Game.questDef(q.id);
+        const st = d.auto ? "" : (q.state === "ready" ? "【可交付】" : `（${q.progress || 0}/${d.objective.count || 1}）`);
+        const hint = (isMain && d.hint) ? `<br><span class="dim" style="color:var(--amber)">${d.hint}</span>` : "";
+        return `<div class="item-row"><span>${isMain ? `<span class="quest-main-badge">主线</span> ` : `<span class="quest-rank">[${d.rank}]</span> `}${d.name} ${st}<br><span class="dim">${d.brief}</span>${hint}</span></div>`;
+      };
+      const mainRows = mains.map(q => row(q, true)).join("");
+      const sideRows = sides.map(q => row(q, false)).join("");
+      const bq = p.boardQuests.filter(q => q.state === "active" || q.state === "ready").map(q =>
+        `<div class="item-row"><span><span class="quest-rank">[D]</span> ${q.name} ${q.state === "ready" ? "【可交付：芬恩】" : `（${q.progress || 0}/${q.count}）`}</span></div>`).join("");
+      const doneMain = p.quests.filter(q => q.state === "done" && Game.questDef(q.id) && Game.questDef(q.id).series === "main").length;
+      const doneSide = p.quests.filter(q => q.state === "done" && Game.questDef(q.id) && Game.questDef(q.id).series === "side").length;
+      showModal("<h3>委托日志</h3>" +
+        `<div class="quest-sec">主线 · 传奇之路（已完成 ${doneMain}/6 章）</div>` +
+        (mainRows || "<div class='dim'>主线已推进至当前章节的尽头——自由探索吧，世界还很大。</div>") +
+        `<div class="quest-sec side">支线 · 世界撞上来的事（已完成 ${doneSide}）</div>` +
+        (sideRows || "<div class='dim'>暂无进行中的支线。委托主要在世界里'撞上'——多出去走走。</div>") +
+        (bq ? `<div class="quest-sec board">悬赏板 · 杂活</div>` + bq : ""));
+    }
+    if (panel === "discovery") {
+      const d = p.discovery;
+      const sec = (title, arr, fmt) => `<h4>${title}（${arr.length}）</h4>` +
+        (arr.length ? arr.map(x => `<div class="dim">· ${fmt(x)}</div>`).join("") : "<div class='dim'>尚无记录。</div>");
+      // 魔物图鉴卡：击杀数 / 弱点 / 生态 / 战利品
+      const elNames = A.DATA.grimoires.element_names || {};
+      const best = d.monsters.length ? `<div class="best-grid">` + d.monsters.map(x => {
+        const m = A.DATA.monsters[x];
+        if (!m) return "";
+        const kills = St.getFlag("mob_kill_" + x) || 0;
+        const drops = (m.drops || []).map(dr => A.DATA.items[dr.id] ? A.DATA.items[dr.id].name : dr.id).join("、") || "无";
+        return `<div class="best-card"><div class="bn">${m.name}</div>
+          <div class="bs"><span>讨伐 <b>${kills}</b></span><span>弱点 <b>${elNames[m.weak] || m.weak || "未知"}</b></span></div>
+          <div class="bl">${m.lore || m.desc}</div>
+          <div class="bd">战利品：${drops}</div></div>`;
+      }).join("") + `</div>` : "<div class='dim'>尚无记录——第一次遭遇总是最危险的，活下来就有记录了。</div>";
+      showModal("<h3>发现日志</h3>" +
+        sec("地点", d.locations, x => x === "ash_mark" ? "？？？（摆成人形的灰）" : x === "scale_ledge" ? "熔痕裂谷 · 龙鳞岩台" : (() => { const [r, n] = x.split("/"); return Game.regionName(r) + " · " + Game.nodeDef(r, n).name; })()) +
+        sec("传闻", d.rumors, x => { const r = A.DATA.rumors.find(r => r.id === x); return r ? r.text : x; }) +
+        `<h4>魔物图鉴（${d.monsters.length}）</h4>` + best +
+        sec("植物", d.plants, x => { const i = A.DATA.items[x]; return i ? `${i.name} — ${i.desc}` : x; }), true);
+    }
+    if (panel === "grimoire") {
+      const book = A.DATA.grimoires.books[p.grimoire.element];
+      showModal("<h3>" + book.name + "</h3>" + book.pages.map(pg => {
+        const un = p.level >= pg.unlock_lvl;
+        return `<div class="item-row"><span>${un ? "✦ " : "· "}第${pg.page}页 · ${pg.name}
+          <span class="dim">（MP${pg.mp}${pg.dmg ? " · 伤害" + pg.dmg : ""}${pg.heal ? " · 恢复" + pg.heal : ""}）</span><br>
+          <span class="dim">${un ? pg.desc : "这一页还未为你翻开（需 Lv." + pg.unlock_lvl + "）。变强的本质，是让魔导书愿意为你翻页。"}</span></span></div>`;
+      }).join(""));
+    }
+    if (panel === "lore") openLore();
+    if (panel === "people") openPeople();
+    if (panel === "radio") openRadio();
+    if (panel === "settings") {
+      const cfg = LLM.getSettings();
+      showModal(`<h3>设置</h3>
+        <div class="settings-row"><span style="width:90px">叙事模式</span>
+          <select id="set-mode"><option value="offline" ${cfg.mode === "offline" ? "selected" : ""}>离线模式（内置叙事器，无需 API）</option>
+          <option value="api" ${cfg.mode === "api" ? "selected" : ""}>API 模式（OpenAI 兼容）</option></select></div>
+        <div class="settings-row"><span style="width:90px">Base URL</span><input id="set-url" value="${cfg.baseUrl}"></div>
+        <div class="settings-row"><span style="width:90px">API Key</span><input id="set-key" type="password" value="${cfg.apiKey}"></div>
+        <div class="settings-row"><span style="width:90px">模型</span><input id="set-model" value="${cfg.model}" placeholder="如 deepseek-chat / gpt-4o-mini"></div>
+        <div class="dim" style="margin:2px 0 4px 98px">常用模型名（须一字不差）：DeepSeek → deepseek-chat；OpenAI → gpt-4o-mini；Kimi → moonshot-v1-8k</div>
+        <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button class="btn primary" id="set-save">保存设置</button>
+          <button class="btn" id="set-test">测试连接</button>
+          <button class="btn" id="set-archive">手动存档</button>
+          <button class="btn" id="set-wipe" style="color:var(--red)">删除存档</button>
+        </div>
+        <div id="set-test-result" class="dim" style="margin-top:6px"></div>
+        <h4>存档文件（换浏览器/换设备用）</h4>
+        <div class="settings-row">
+          <button class="btn" id="set-export">导出存档文件</button>
+          <button class="btn" id="set-import-btn">导入存档文件</button>
+          <input type="file" id="set-import" accept=".json" style="display:none">
+        </div>
+        <div class="dim" style="margin-top:10px">存档保存在本机浏览器（localStorage），每回合自动存档；注意：用不同浏览器或不同方式打开页面时存档互不相通，跨环境请先「导出存档文件」。API Key 仅存在本机。</div>`);
+      $("set-save").onclick = () => {
+        LLM.saveSettings({ mode: $("set-mode").value, baseUrl: $("set-url").value.trim(), apiKey: $("set-key").value.trim(), model: $("set-model").value.trim() });
+        print("设置已保存。", true); $("modal-mask").style.display = "none";
+      };
+      $("set-test").onclick = async () => {
+        const r = $("set-test-result");
+        r.style.color = "var(--ink-dim)";
+        r.textContent = "正在连接 API……";
+        const res = await LLM.testConnection({ baseUrl: $("set-url").value.trim(), apiKey: $("set-key").value.trim(), model: $("set-model").value.trim() });
+        r.style.color = res.ok ? "var(--green)" : "var(--red)";
+        r.textContent = (res.ok ? "✓ " : "✕ ") + res.msg;
+      };
+      $("set-archive").onclick = () => { St.save(); print("已手动存档。", true); };
+      $("set-wipe").onclick = () => { if (confirm("确定删除存档？此操作不可恢复。")) { St.wipe(); location.reload(); } };
+      $("set-export").onclick = () => {
+        St.save();
+        const raw = localStorage.getItem(St.SAVE_KEY);
+        if (!raw) { print("还没有可导出的存档。", true); return; }
+        const blob = new Blob([raw], { type: "application/json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "astraea-save-" + new Date().toISOString().slice(0, 10) + ".json";
+        a.click();
+        URL.revokeObjectURL(a.href);
+        print("存档文件已导出到下载目录。", true);
+      };
+      $("set-import-btn").onclick = () => $("set-import").click();
+      $("set-import").onchange = e => {
+        const f = e.target.files[0];
+        if (!f) return;
+        const rd = new FileReader();
+        rd.onload = () => {
+          try {
+            const s = JSON.parse(rd.result);
+            if (!s || s.version !== 1 || !s.player) throw new Error("存档格式不符");
+            localStorage.setItem(St.SAVE_KEY, JSON.stringify(s));
+            alert("存档导入成功，即将载入。");
+            location.reload();
+          } catch (err) { alert("导入失败：" + err.message); }
+        };
+        rd.readAsText(f);
+      };
+    }
+  }
+
+  /* ================= 区域小地图 ================= */
+  const REGION_MAPS = {
+    ashford: { img: "assets/map-ashford.png", spots: [
+      { id: "tavern", nm: "铜壶与龙息酒馆", x: 46, y: 41, icon: "home",  fn: "家 · 休整 / 仓库 / 听大新闻" },
+      { id: "guild",  nm: "公会联络点",     x: 37, y: 25, icon: "scroll", fn: "委托交付 · 声望登记" },
+      { id: "square", nm: "镇广场",         x: 60, y: 56, icon: "board", fn: "悬赏板 · 流民摊" },
+      { id: "smithy", nm: "布洛姆铁匠铺",   x: 83, y: 45, icon: "anvil", fn: "强化武器（30 金）", spot: true },
+      { id: "shop",   nm: "艾达杂货店",     x: 74, y: 69, icon: "shop",  fn: "买卖补给", spot: true },
+      { id: "gate",   nm: "镇门",           x: 53, y: 79, icon: "gate",  fn: "通往雾帷森林 / 熔痕裂谷 / 西林哨所" }
+    ]},
+    mistwood: { img: "assets/map-mistwood.png", spots: [
+      { id: "forest_edge", nm: "林缘小径",   x: 72, y: 89, icon: "leaf",     fn: "通往烬炉镇 · 采药小径起点" },
+      { id: "clearing",    nm: "林间空地",   x: 55, y: 43, icon: "tent",     fn: "可扎营 · 药剂师学徒青芷" },
+      { id: "watchtower",  nm: "废弃哨塔",   x: 50, y: 19, icon: "tower",    fn: "狼王领地外围 · 北行通雷鸣山口" },
+      { id: "hunter_hut",  nm: "猎户小屋",   x: 81, y: 53, icon: "home",     fn: "老猎户加洛 · 补给 / 告示" },
+      { id: "deep_mist",   nm: "迷雾深处",   x: 20, y: 56, icon: "fog",      fn: "雾最浓处 · 三步之外只剩声音" },
+      { id: "moon_cave",   nm: "月光苔洞窟", x: 16, y: 15, icon: "cave",     fn: "隐藏地点 · 月光苔", hidden: true }
+    ]},
+    lavarift: { img: "assets/map-lavarift.png", spots: [
+      { id: "rift_edge",      nm: "裂谷边缘",   x: 81, y: 33, icon: "mountain", fn: "通往烬炉镇 · 可扎营" },
+      { id: "obsidian_slope", nm: "黑曜石坡道", x: 58, y: 43, icon: "mountain", fn: "下矿主路 · 玻璃质岩壁" },
+      { id: "miner_camp",     nm: "矿工营地",   x: 45, y: 34, icon: "tent",     fn: "黛拉 · 补给 / 告示" },
+      { id: "lava_depths",    nm: "熔痕深处",   x: 30, y: 56, icon: "flame",    fn: "岩浆层矿道 · 危险" },
+      { id: "scale_ledge",    nm: "龙鳞岩台",   x: 18, y: 73, icon: "gem",      fn: "隐藏地点 · 龙鳞", hidden: true }
+    ]},
+    thunderpass: { img: "assets/map-thunderpass.png", spots: [
+      { id: "pass_foot",     nm: "山口隘口",   x: 62, y: 79, icon: "gate",     fn: "通往雾帷森林 · 商队歇脚" },
+      { id: "pass_mid",      nm: "雷音栈道",   x: 27, y: 49, icon: "mountain", fn: "贴壁军道 · 电弧爬行" },
+      { id: "pass_shrine",   nm: "风暴神龛",   x: 46, y: 41, icon: "shrine",   fn: "守龛老人 · 镇雷者传说" },
+      { id: "pass_overlook", nm: "岭脊瞭望台", x: 32, y: 15, icon: "eye",      fn: "隐藏地点 · 远眺圣辉城", hidden: true }
+    ]},
+    westwatch: { img: "assets/map-westwatch.png", spots: [
+      { id: "watch_gate", nm: "哨所辕门", x: 72, y: 45, icon: "gate",   fn: "通往烬炉镇 · 登记处 / 粥棚" },
+      { id: "watch_yard", nm: "哨所校场", x: 53, y: 35, icon: "sword",  fn: "卫霜 · 军需处补给 / 告示" },
+      { id: "armory",     nm: "旧军械库", x: 34, y: 37, icon: "lock",   fn: "上锁的石库 · 卫霜有钥匙" }
+    ]}
+  };
+  function openRegionMap(rid) {
+    const p = St.get().player;
+    const R = REGION_MAPS[rid];
+    if (!R) return;
+    const disc = p.discovery.locations;
+    const here = p.location;
+    const markers = R.spots.filter(sp => !sp.hidden || disc.includes(rid + "/" + sp.id)).map(sp => {
+      const hereCls = (here.region === rid && here.node === sp.id) ? "here" : "";
+      return `<div class="mm-marker ${sp.spot ? "spot" : ""} ${hereCls}" style="left:${sp.x}%;top:${sp.y}%">
+        <div class="badge">${ic(sp.icon, sp.spot ? 12 : 15)}</div><div class="nm">${sp.nm}</div><div class="fn">${sp.fn}</div></div>`;
+    }).join("");
+    showModal(`<h3>${Game.regionName(rid)} · 区域小地图</h3>
+      <div style="text-align:center;margin-bottom:10px"><button class="btn" id="map-back">${ic("map", 13)} 返回大陆舆图</button></div>
+      <div class="map-wrap"><img src="${R.img}" alt="${Game.regionName(rid)}小地图">${markers}</div>
+      <div id="map-info" class="dim">图标标注该区域的关键地点与功能；隐藏地点会在你发现后补上。金色描边的徽章标记大节点，小徽章为设施。</div>`, true);
+    $("map-back").onclick = () => openPanel("map");
+  }
+
+  /* ================= 世界观 · 编年史 ================= */
+  const LORE_TABS = [
+    { id: "genesis",  nm: "创生与枯死", icon: "tree" },
+    { id: "timeline", nm: "大事年表",   icon: "hourglass" },
+    { id: "factions", nm: "势力",       icon: "shield" },
+    { id: "geo",      nm: "地理与禁区", icon: "map" },
+    { id: "grimoire", nm: "魔导书",     icon: "book" }
+  ];
+  function openLore(tab) {
+    tab = tab || "genesis";
+    const tabsHtml = LORE_TABS.map(t => `<button class="${t.id === tab ? "on" : ""}" onclick="UI.lore('${t.id}')">${ic(t.icon, 13)}${t.nm}</button>`).join("");
+    let body = "";
+    if (tab === "genesis") {
+      body = `<div class="lore-quote">尤克特拉贯穿大陆之时，魔力如河入海，各归其道。纪元 671 年的那个夜里，世界树枯死了——没有雷火，没有预言应验。只是枯死了，像一盏灯油尽。</div>
+        <p>从那以后，魔力成了没有河床的水：紊流、倒灌，在不该醒来的地方唤醒东西。魔物多了，龙醒了，魔导书开始挑人——挑那些手背上有烙印的人。</p>
+        <p>七十二年过去，王国把历法翻到新的一页，称「魔法纪元」。但老人们不这么叫。他们说：这是树死后的第七十二个冬天。</p>
+        <div class="lore-quote">王都在远方，龙在更远方。而你，在烬炉镇的酒馆里，刚醒。</div>`;
+    }
+    if (tab === "timeline") {
+      const EV = [
+        ["纪元前 · 神话时代", "尤克特拉贯穿大陆，魔力有序，巨龙眠于北荒。吟游诗人说，那时影子还很淡。"],
+        ["纪元 671 · 树殁", "世界树一夜枯死，魔力自此紊流。史称「大枯」。魔物增多，龙族苏醒，魔导书开始择主。"],
+        ["纪元 703 · 西境战争", "西林一线全面开战。战争结束了，灰潮沼泽里不肯散去的名字没有。"],
+        ["纪元 728 · 镜湖大静水", "镜湖一夜封静，诗人之邦自此与世半隔。没人说得出那晚发生了什么。"],
+        ["纪元 743 · 当下", "龙眠荒原被列为 S 级禁区，辉门的纹章查验一年严过一年。你在烬炉镇觉醒魔导书——故事从这里开始。"]
+      ];
+      body = `<div class="lore-tl">` + EV.map(e => `<div class="ev"><div class="yr">${e[0]}</div><div class="et">${e[1]}</div></div>`).join("") + `</div>`;
+    }
+    if (tab === "factions") {
+      const ORDERS = [
+        ["辉光", "#f5c96b", "荣", "骑士团的门面与典范，出征永远走在最前。"],
+        ["银棘", "#c0c8d0", "棘", "掌管选拔与戒律。每年开春的选拔，是无数少年的门槛。"],
+        ["风暴", "#7fb3e0", "风", "征伐之团，驻扎北线，盯着龙眠荒原的方向。"],
+        ["灰烬", "#c8523c", "烬", "肃清与追猎。他们在哪里出现，哪里就有不该存在的东西。"],
+        ["深泉", "#5fa8a0", "泉", "秘术研究与魔导书典籍的守护者。"],
+        ["磐石", "#a08860", "磐", "王都城防。辉门的纹章查验，归他们管。"],
+        ["夜鸦", "#8a7fb8", "鸦", "最神秘的一团——没人知道他们驻在哪座塔。"],
+        ["蔷薇", "#d07f9a", "蔷", "外交与贵族事务，尖塔里最讲体面的一群人。"]
+      ];
+      body = `<p style="text-align:center;color:var(--ink-dim);font-size:14px">圣辉城八座尖塔，各属一个骑士团。</p><div class="crest-grid">` +
+        ORDERS.map(o => `<div class="crest"><div class="sigil" style="border-color:${o[1]};color:${o[1]}"><span>${o[2]}</span></div><div><div class="cn">${o[0]}骑士团</div><div class="cd">${o[3]}</div></div></div>`).join("") +
+        `</div><div class="crest-grid" style="margin-top:9px">
+          <div class="crest" style="border-color:var(--amber)"><div class="sigil" style="border-color:var(--amber);color:var(--amber)"><span>壶</span></div><div><div class="cn">铜壶公会</div><div class="cd">冒险者的行会。委托、声望、注册猎人——你在册或不在册，是两种人生。</div></div></div>
+          <div class="crest" style="border-color:#6e6252"><div class="sigil" style="border-color:#6e6252;color:#6e6252"><span>灰</span></div><div><div class="cn">灰烬会</div><div class="cd">只在压低声音的传闻里出现的名字。裂谷的矿工说，别多问。</div></div></div>
+        </div>`;
+    }
+    if (tab === "geo") {
+      const RANKS = [
+        ["D", "#86a95c", "雾帷森林外围", "新手的试炼场。狼群与药草，教训和收获都很直接。"],
+        ["C", "#5f87b0", "熔痕裂谷矿区 · 西林哨所周边", "需要补给与准备的深度。火纹矿值钱，命更值钱。"],
+        ["B", "#e0aa45", "雷鸣山口 · 熔痕深处", "精英魔物盘踞。雷鹰、熔核元素——去之前，先想清楚怎么回来。"],
+        ["A", "#c87fd0", "镜湖 · 灰潮沼泽 · 苍岩王陵", "封锁区域，传闻之地。地图上标得出，脚步到不了。"],
+        ["S", "#c8523c", "龙眠荒原", "禁区。一片骷髅标记。任何劝阻你前往的人，都是对的。"]
+      ];
+      body = RANKS.map(r => `<div class="rank-row"><span class="rank-badge" style="color:${r[1]};border-color:${r[1]}">${r[0]}</span><span><b style="color:var(--ink)">${r[2]}</b><br><span class="dim">${r[3]}</span></span></div>`).join("") +
+        `<p class="dim" style="margin-top:10px">危险度由铜壶公会评定，刻在每块悬赏板的角上。评级不是建议，是统计。</p>`;
+    }
+    if (tab === "grimoire") {
+      const EL_COLOR = { fire: "#c8523c", water: "#5f87b0", wind: "#86a95c", earth: "#a08050", thunder: "#e0aa45", dark: "#8a7fb8", heal: "#d07f9a", manifest: "#b8b0a0" };
+      const names = A.DATA.grimoires.element_names;
+      body = `<div class="elem-orbs">` + A.DATA.grimoires.elements.map(el =>
+        `<div class="elem-orb"><div class="o" style="background:radial-gradient(circle at 35% 30%, ${EL_COLOR[el]}, #171009 80%)"></div>${names[el]}</div>`).join("") + `</div>
+        <div class="lore-quote">每个觉醒者生来绑定一本魔导书，它将决定你一生魔法的大方向。人死书散，不可更换。</div>
+        <p>魔导书不是工具，是活的东西。它替你记下你学会的每一页，也替你记住你还没资格翻开的那几页。</p>
+        <div class="lore-quote">变强的本质，是让魔导书愿意为你翻页。</div>`;
+    }
+    showModal(`<h3>世界观 · 阿斯特雷亚编年史</h3><div class="lore-tabs">${tabsHtml}</div><div class="lore-body">${body}</div>`, true);
+  }
+
+  /* ================= 人物卡 ================= */
+  const PPL_TABS = [
+    { id: "companion",   nm: "同伴",     icon: "people" },
+    { id: "ashford",     nm: "烬炉镇",   icon: "home" },
+    { id: "mistwood",    nm: "雾帷森林", icon: "leaf" },
+    { id: "lavarift",    nm: "熔痕裂谷", icon: "flame" },
+    { id: "thunderpass", nm: "雷鸣山口", icon: "mountain" },
+    { id: "westwatch",   nm: "西林哨所", icon: "shield" }
+  ];
+  const PPL_ICON = {
+    martha: "home", ada: "shop", brom: "anvil", finn: "scroll", oldwoman: "fog",
+    garo: "leaf", della: "ore", yanshu: "hammer", laen: "lyre", xiaoduan: "flask",
+    weishuang: "sword", tongshi: "coin", qinduo: "pack", shrine_keeper: "shrine",
+    brody: "flask", vera: "sword", kane: "star"
+  };
+  function pplMet(id) {
+    const p = St.get().player;
+    return !!(St.getFlag("greeted_" + id) || p.companions.met.includes(id) || p.companions.with === id);
+  }
+  function openPeople(tab) {
+    tab = tab || "companion";
+    const tabsHtml = PPL_TABS.map(t => `<button class="${t.id === tab ? "on" : ""}" onclick="UI.ppl('${t.id}')">${ic(t.icon, 13)}${t.nm}</button>`).join("");
+    const cards = [];
+    for (const id in A.DATA.npcs) {
+      const n = A.DATA.npcs[id];
+      const inTab = tab === "companion" ? !!n.companion : n.region === tab;
+      if (!inTab) continue;
+      const met = pplMet(id);
+      if (!met && n.condition_flag && !St.getFlag(n.condition_flag)) continue; // 未触发条件的隐藏人物不剧透
+      const ndef = Game.nodeDef(n.region, n.node);
+      if (met) {
+        cards.push(`<div class="ppl-card"><div class="ppl-medal">${ic(PPL_ICON[id] || "people", 24)}</div>
+          <div><div class="ppl-name">${n.name}</div><div class="ppl-role">${n.role}</div>
+          <div class="ppl-loc">${ic("map", 11)} ${Game.regionName(n.region)} · ${ndef.name}</div>
+          <div class="ppl-bio">${n.bio || ""}</div></div></div>`);
+      } else {
+        cards.push(`<div class="ppl-card locked"><div class="ppl-medal">${ic("question", 22)}</div>
+          <div><div class="ppl-name" style="color:#6e6252">？？？</div>
+          <div class="ppl-loc">尚未谋面 —— 去${Game.regionName(n.region)}走走，或许会遇见。</div></div></div>`);
+      }
+    }
+    showModal(`<h3>人物卡</h3><div class="lore-tabs">${tabsHtml}</div>
+      <div class="ppl-grid">${cards.join("") || "<div class='dim'>此类别下暂无人物。</div>"}</div>
+      <div class="dim" style="margin-top:10px">与人物交谈过后，他们的卡片才会为你翻开。</div>`, true);
+  }
+
+  function openShop(npcId) {
+    const stock = Game.shopStock(npcId);
+    if (!stock) { print("这里没有生意可做。"); return; }
+    const npc = A.DATA.npcs[npcId];
+    showModal(`<h3>${npc.name}的铺子（金币：${St.get().player.gold}）</h3>` +
+      stock.map(s => `<div class="item-row"><span>${s.name} <span class="dim">${s.desc}</span></span>
+        <span class="ops"><button onclick="UI.buy('${npcId}','${s.id}')">买（${s.price}金）</button></span></div>`).join("") +
+      `<div class="dim" style="margin-top:8px">卖出物品：在「背包」面板操作，卖价为半价。</div>`);
+  }
+
+  function openBoard() {
+    const p = St.get().player;
+    const list = Game.boardList(p.location.node);
+    showModal("<h3>" + (p.location.node === "square" ? "悬赏板" : "本地告示") + "</h3>" +
+      (list.length ? list.map(q => `<div class="item-row"><span>${q.label}</span>
+        <span class="ops"><button onclick="UI.accept('${q.id}')">接取</button></span></div>`).join("")
+        : "<div class='dim'>板上只有风干的旧告示。委托主要在世界里'撞上'——出门走走吧。</div>") +
+      `<div class="dim" style="margin-top:8px">提示：路边哭泣的村民、被烧毁的商队、别的镇子墙上的告示——委托是探索的产物。</div>`);
+  }
+
+  window.UI = {
+    buy: (npc, item) => { print(Game.buyItem(npc, item)); render(); openShop(npc); },
+    accept: id => { print(Game.acceptQuest(id)); render(); $("modal-mask").style.display = "none"; },
+    lore: t => openLore(t),
+    ppl: t => openPeople(t),
+    invAct: (op, id) => {
+      const map = { use: () => Game.useItem(id), sell: () => Game.sellItem(id), deposit: () => Game.deposit(id, 1), withdraw: () => Game.withdraw(id, 1), equip: () => Game.equipItem(id) };
+      print(map[op]()); render(); openPanel("inventory");
+    },
+    unequip: slot => { print(Game.unequipItem(slot)); render(); },
+    craft: id => { print(Game.craft(id)); render(); openCraft(); }
+  };
+
+  /* ================= 锻造铺（布洛姆） ================= */
+  function openCraft() {
+    const list = Game.recipeList();
+    const cards = list.map(r => {
+      const mats = r.mats.map(m => `<span class="${m.have >= m.need ? "ok" : "lack"}">${m.name} ${m.have}/${m.need}</span>`).join("");
+      const btn = r.owned ? `<span class="dim">已持有</span>`
+        : r.can ? `<button class="btn primary" onclick="UI.craft('${r.id}')">打造（${r.gold} 金）</button>`
+        : `<button class="btn" disabled style="opacity:.45">材料/工钱不足</button>`;
+      return `<div class="craft-card"><div><span class="cn">${r.name}</span><span class="cs">${r.slot === "weapon" ? "武器 · 攻击 +" + r.atk : "护甲 · 防御 +" + r.def}</span></div>
+        <div class="cm">${mats}<span class="${St.get().player.gold >= r.gold ? "ok" : "lack"}">工钱 ${r.gold} 金</span></div>
+        <div class="cd">${r.note}</div>
+        <div style="margin-top:7px;text-align:right">${btn}</div></div>`;
+    }).join("");
+    showModal(`<h3>布洛姆的铁匠铺 · 打造装备</h3>
+      <div class="dim" style="margin-bottom:10px">布洛姆擦着锤头：'料你出，火我生。好东西打出来，是能跟你走一辈子的。'——材料来自狩猎与采集，打造后在背包里装备。</div>
+      ${cards}`);
+  }
+
+  /* ================= 龙骰（酒馆赌桌：三局两胜） ================= */
+  const DICE_FACE = ["", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+  const Dice = { bet: 10, round: 0, wins: 0, loses: 0, busy: false };
+  function roll3() { return [1, 2, 3].map(() => 1 + Math.floor(Math.random() * 6)); }
+  function diceView(pRoll, hRoll, msg) {
+    const rd = [0, 1, 2].map(i => {
+      const cls = i < Dice.wins ? "win" : i < Dice.loses ? "lose" : "";
+      return `<span class="rd ${cls}"></span>`;
+    }).join("");
+    const pSum = pRoll ? pRoll.reduce((a, b) => a + b, 0) : null;
+    const hSum = hRoll ? hRoll.reduce((a, b) => a + b, 0) : null;
+    return `<div class="dice-table">
+      <div class="dim" style="font-size:13px">铜壶与龙息 · 角落的赌桌——三颗骨骰，比点数，三局两胜。当前押注 <b style="color:var(--amber-hi)">${Dice.bet} 金</b>（你有 ${St.get().player.gold} 金）</div>
+      <div class="dice-vs">
+        <div class="dice-side"><div class="who">你</div><div class="dice">${pRoll ? pRoll.map(d => DICE_FACE[d]).join(" ") : "· · ·"}</div><div class="sum">${pSum !== null ? pSum + " 点" : ""}</div></div>
+        <div class="dice-side"><div class="who">庄家</div><div class="dice" style="color:var(--ink-dim)">${hRoll ? hRoll.map(d => DICE_FACE[d]).join(" ") : "· · ·"}</div><div class="sum">${hSum !== null ? hSum + " 点" : ""}</div></div>
+      </div>
+      <div class="dice-rounds">${rd}</div>
+      <div class="dice-msg">${msg}</div>
+      <div class="dice-bets"><span class="dim" style="font-size:13px">押注</span>${[5, 10, 20].map(b => `<button class="bet ${Dice.bet === b ? "on" : ""}" onclick="UI.dbet(${b})">${b} 金</button>`).join("")}</div>
+      <div style="margin-top:8px;display:flex;justify-content:center;gap:10px">
+        <button class="btn primary" id="dice-roll" ${Dice.busy || St.get().player.gold < Dice.bet ? "disabled" : ""}>掷 骰</button>
+        <button class="btn" onclick="document.getElementById('modal-mask').style.display='none'">离桌</button>
+      </div></div>`;
+  }
+  function openDice() {
+    Dice.round = 0; Dice.wins = 0; Dice.loses = 0; Dice.busy = false;
+    showModal(`<h3>龙骰</h3><div id="dice-box">${diceView(null, null, "坐下来的瞬间，筹码与骨骰的声响就把你围住了。玛尔塔在吧台后瞥了一眼：'输光了可别哭。'")}</div>`);
+    $("dice-roll").onclick = diceRoll;
+  }
+  function diceRoll() {
+    if (Dice.busy) return;
+    const p = St.get().player;
+    if (p.gold < Dice.bet) return;
+    Dice.busy = true;
+    // 掷骰动画：快速闪动后定格
+    const box = $("dice-box");
+    let ticks = 0;
+    const anim = setInterval(() => {
+      box.innerHTML = diceView(roll3(), roll3(), "骰子在碗里打转——");
+      ticks++;
+      if (ticks >= 7) {
+        clearInterval(anim);
+        const pr = roll3(), hr = roll3();
+        const ps = pr.reduce((a, b) => a + b, 0), hs = hr.reduce((a, b) => a + b, 0);
+        let msg;
+        if (ps === hs) msg = ps + " 对 " + hs + "——平点，这局作废，再掷。";
+        else if (ps > hs) { Dice.wins++; msg = ps + " 对 " + hs + "——这局是你的！"; }
+        else { Dice.loses++; msg = ps + " 对 " + hs + "——庄家收走了这一局。"; }
+        const settled = Dice.wins >= 2 || Dice.loses >= 2;
+        if (settled) {
+          const win = Dice.wins >= 2;
+          const result = Game.diceSettle(win, Dice.bet);
+          msg += (win ? " 三局两胜，桌上响起零星的喝彩。" : " 三局两负，庄家把你的注拨了过去。");
+          box.innerHTML = diceView(pr, hr, msg);
+          print(result); render();
+          // 结算后开新一桌
+          Dice.round = 0; Dice.wins = 0; Dice.loses = 0; Dice.busy = false;
+          setTimeout(() => { if ($("dice-box")) { $("dice-box").innerHTML = diceView(null, null, "新一桌。手气这种东西，信则有。"); $("dice-roll").onclick = diceRoll; } }, 1800);
+        } else {
+          box.innerHTML = diceView(pr, hr, msg);
+          Dice.busy = false;
+          $("dice-roll").onclick = diceRoll;
+        }
+      }
+    }, 90);
+  }
+  Object.assign(window.UI, {
+    dbet: b => { Dice.bet = b; if ($("dice-box")) { $("dice-box").innerHTML = diceView(null, null, "押 " + b + " 金。掷吧。"); $("dice-roll").onclick = diceRoll; } }
+  });
+
+  /* ================= 旅人电台（预装正版曲目：Kevin MacLeod, CC BY 4.0） ================= */
+  const RADIO_BASE = "https://incompetech.com/music/royalty-free/mp3-royaltyfree/";
+  const RADIO_PRESET = [
+    { cat: "中世纪酒馆", name: "Sweeter Vermouth",      cn: "微醺味美思" },
+    { cat: "中世纪酒馆", name: "Village Consort",       cn: "乡间乐团" },
+    { cat: "中世纪酒馆", name: "Suonatore di Liuto",    cn: "鲁特琴师" },
+    { cat: "中世纪酒馆", name: "Folk Round",            cn: "民谣轮唱" },
+    { cat: "凯尔特",     name: "Skye Cuillin",          cn: "斯凯群山" },
+    { cat: "凯尔特",     name: "Celtic Impulse",        cn: "凯尔特心潮" },
+    { cat: "凯尔特",     name: "Moorland",              cn: "荒野" },
+    { cat: "奇幻管弦",   name: "Teller of the Tales",   cn: "说书人" },
+    { cat: "奇幻管弦",   name: "Lord of the Land",      cn: "大地领主" },
+    { cat: "奇幻管弦",   name: "The Pyre",              cn: "火葬堆" },
+    { cat: "奇幻管弦",   name: "Frost Waltz",           cn: "霜之圆舞" },
+    { cat: "奇幻管弦",   name: "Meditation Impromptu 01", cn: "冥想即兴" }
+  ];
+  const Radio = {
+    audio: new Audio(), list: [], idx: -1, order: [], oi: 0,
+    init() {
+      this.audio.volume = 0.7;
+      this.audio.addEventListener("ended", () => this.next());
+      // 播放出错（网络中断/资源失效）→ 自动切下一首，避免卡死在"播放中"
+      this.audio.addEventListener("error", () => { if (this.idx >= 0) setTimeout(() => this.next(), 1500); });
+      // 看门狗：显示播放中但进度停滞约 8 秒 → 重载音源并从断点续播
+      this._lastT = -1; this._stall = 0;
+      setInterval(() => {
+        if (this.idx < 0 || this.audio.paused || !this.audio.src) return;
+        const t = this.audio.currentTime;
+        if (t === this._lastT) {
+          this._stall++;
+          if (this._stall >= 4) {
+            const pos = t, src = this.list[this.idx].src;
+            this.audio.src = src;
+            this.audio.addEventListener("loadedmetadata", () => {
+              try { this.audio.currentTime = pos; } catch (e) {}
+              this.audio.play().catch(() => {});
+            }, { once: true });
+            this.audio.load();
+            this._stall = 0;
+          }
+        } else this._stall = 0;
+        this._lastT = t;
+      }, 2000);
+      this.list = RADIO_PRESET.map(t => ({
+        name: t.cn + " · " + t.name, cat: t.cat, kind: "preset",
+        src: RADIO_BASE + encodeURIComponent(t.name) + ".mp3"
+      }));
+      let urls = [];
+      try { urls = JSON.parse(localStorage.getItem("astraea_radio_urls") || "[]"); } catch (e) {}
+      for (const u of urls) this.list.push({ name: u.name, cat: "自选", src: u.url, kind: "url" });
+      this.shuffle();
+    },
+    shuffle() {
+      // 洗牌：随机顺序，一轮播完重新洗
+      this.order = this.list.map((_, i) => i);
+      for (let i = this.order.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [this.order[i], this.order[j]] = [this.order[j], this.order[i]];
+      }
+      this.oi = 0;
+    },
+    autoplay() {
+      // 进游戏自动开播（需在用户点击的调用栈里，浏览器才放行声音）
+      if (this.idx >= 0 || !this.list.length) return;
+      this.play(this.order[0]);
+    },
+    saveUrls() {
+      localStorage.setItem("astraea_radio_urls", JSON.stringify(this.list.filter(t => t.kind === "url").map(t => ({ name: t.name, url: t.src }))));
+    },
+    addUrl(url) {
+      if (!url) return;
+      const nm = url.split("/").pop().split("?")[0].slice(0, 40) || "在线曲目";
+      this.list.push({ name: decodeURIComponent(nm), cat: "自选", src: url, kind: "url" });
+      this.saveUrls();
+    },
+    remove(i) {
+      const t = this.list[i];
+      if (!t || t.kind !== "url") return; // 预装曲目常驻
+      this.list.splice(i, 1);
+      this.saveUrls();
+      if (this.idx === i) { this.audio.pause(); this.idx = -1; }
+      else if (this.idx > i) this.idx--;
+    },
+    play(i) {
+      if (i < 0 || i >= this.list.length) return;
+      this.idx = i;
+      this.audio.src = this.list[i].src;
+      this.audio.play().catch(() => {});
+      this.updateNowPlaying();
+    },
+    toggle() {
+      if (this.idx < 0) { if (this.list.length) this.play(this.order[0]); return; }
+      if (this.audio.paused) this.audio.play().catch(() => {}); else this.audio.pause();
+      this.updateNowPlaying();
+    },
+    next() {
+      if (!this.list.length) return;
+      this.oi++;
+      if (this.oi >= this.order.length) this.shuffle();
+      this.play(this.order[this.oi]);
+    },
+    setVolume(v) { this.audio.volume = v; },
+    nowText() {
+      return (this.idx >= 0 && !this.audio.paused) ? "♪ " + this.list[this.idx].name : "";
+    },
+    updateNowPlaying() {
+      const t = this.nowText();
+      $("now-playing").style.display = t ? "" : "none";
+      $("now-playing").textContent = t;
+    }
+  };
+  Radio.init();
+
+  function openRadio() {
+    let lastCat = "";
+    const rows = Radio.list.map((t, i) => {
+      const head = t.cat !== lastCat ? `<h4>${t.cat}</h4>` : "";
+      lastCat = t.cat;
+      return head + `<div class="item-row"><span>${Radio.idx === i ? "▶ " : ""}${t.name}</span>
+      <span class="ops"><button onclick="UI.rplay(${i})">${Radio.idx === i && !Radio.audio.paused ? "播放中" : "播放"}</button>${t.kind === "url" ? `<button onclick="UI.rdel(${i})">移除</button>` : ""}</span></div>`;
+    }).join("");
+    showModal(`<h3>旅人电台</h3>
+      <div class="radio-now">${Radio.nowText() || "壁炉边还安静着。点一首，旅途就开始了。"}</div>
+      <div class="radio-row">
+        <button class="btn" onclick="UI.rtoggle()">播放 / 暂停</button>
+        <button class="btn" onclick="UI.rnext()">下一首</button>
+        <span class="dim">音量</span><input type="range" id="radio-vol" min="0" max="1" step="0.05" value="${Radio.audio.volume}" style="width:120px">
+      </div>
+      ${rows}
+      <div class="radio-row" style="margin-top:12px">
+        <input id="radio-url" placeholder="有自己的收藏？粘贴 mp3 直链加入" style="flex:1">
+        <button class="btn" id="radio-add-url">添加</button>
+      </div>
+      <div class="dim" style="margin-top:6px">曲目：Kevin MacLeod（incompetech.com），CC BY 4.0 授权，在线播放。进游戏自动随机开播，播完按随机顺序切下一首，顶栏显示当前曲目。</div>`);
+    $("radio-vol").oninput = e => Radio.setVolume(parseFloat(e.target.value));
+    $("radio-add-url").onclick = () => { Radio.addUrl($("radio-url").value.trim()); openRadio(); };
+  }
+  Object.assign(window.UI, {
+    rplay: i => { Radio.play(i); openRadio(); },
+    rdel: i => { Radio.remove(i); openRadio(); Radio.updateNowPlaying(); },
+    rtoggle: () => { Radio.toggle(); openRadio(); },
+    rnext: () => { Radio.next(); openRadio(); }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
