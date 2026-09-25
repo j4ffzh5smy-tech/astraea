@@ -7,6 +7,7 @@ import os
 import re
 import subprocess
 import sys
+import threading
 import time
 import urllib.request
 
@@ -47,7 +48,40 @@ def push_tracker(endpoint):
         print("（git push 未成功，线上游戏暂时收不到新地址，可稍后重开本程序）")
 
 
+def tunnel_alive(url):
+    try:
+        with urllib.request.urlopen(url + "/api/stats", timeout=10) as r:
+            r.read(64)
+        return True
+    except Exception:
+        return False
+
+
+RESTART = False  # watchdog 置位后，外层循环自动重建隧道
+
+
+def watchdog(cf, url):
+    global RESTART
+    # 免费隧道会静默失效（进程还在但 DNS 不通）：每 2 分钟探活一次，连续 2 次失败就重建隧道
+    fails = 0
+    while fails < 2:
+        time.sleep(120)
+        if tunnel_alive(url):
+            fails = 0
+        else:
+            fails += 1
+            print("公网隧道无响应（第 %d 次），准备重建……" % fails)
+    print("公网隧道已失效，自动重建……")
+    RESTART = True
+    try:
+        cf.terminate()
+    except Exception:
+        pass
+
+
 def main():
+    global RESTART
+    RESTART = False
     ensure_cloudflared()
 
     server = subprocess.Popen([sys.executable, os.path.join(BASE, "server.py")], cwd=BASE, creationflags=NO_WINDOW)
@@ -70,12 +104,12 @@ def main():
                 url = m.group(0)
                 break
         if not url:
-            print("隧道建立失败，请检查网络后重试。")
-            server.terminate()
-            return
+            print("隧道建立失败，3 秒后自动重试……")
+            return True
         print("公网统计入口: %s" % url)
         push_tracker(url)
-        print("\n统计已开启，保持本窗口开着即可。关掉窗口即停止统计。\n")
+        threading.Thread(target=watchdog, args=(cf, url), daemon=True).start()
+        print("\n统计已开启（后台运行，看门狗每 2 分钟检查隧道健康）。\n")
         cf.wait()
     except KeyboardInterrupt:
         pass
@@ -85,7 +119,14 @@ def main():
         print("正在关闭并通知线上停止统计……")
         push_tracker(None)
         print("已停止。")
+    return RESTART
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        while True:
+            if not main():
+                break
+            time.sleep(3)
+    finally:
+        print("统计进程已退出。")
