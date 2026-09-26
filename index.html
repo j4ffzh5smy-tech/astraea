@@ -2,7 +2,20 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" id="vp">
+<script>
+/* 手机访问：锁定 1280px 桌面渲染宽度，整体缩放，比例与电脑版一致 */
+(function () {
+  try {
+    var coarse = window.matchMedia && matchMedia("(pointer: coarse)").matches;
+    var small = Math.min(window.screen.width || 9999, window.screen.height || 9999) < 700;
+    if (coarse && small) {
+      document.getElementById("vp").setAttribute("content", "width=1280");
+      document.documentElement.classList.add("phone-fit");
+    }
+  } catch (e) {}
+})();
+</script>
 <title>魔导纪元 · Astraea</title>
 <style>
   :root {
@@ -419,6 +432,18 @@
   input[type=range] { accent-color: var(--amber); }
 
   /* ================= 小屏适配：手机 / 平板横屏 ================= */
+  /* 手机竖屏旋转提示（仅 phone-fit 模式） */
+  #rotate-hint { display: none; position: fixed; inset: 0; z-index: 999;
+    background: radial-gradient(circle at 50% 40%, #1a1410, #0a0704 78%);
+    align-items: center; justify-content: center; flex-direction: column; gap: 34px; text-align: center; }
+  .phone-fit body.portrait #rotate-hint { display: flex; }
+  #rotate-hint .rh-ic { width: 88px; height: 152px; border: 4px solid var(--amber); border-radius: 16px; position: relative;
+    animation: rh-spin 2.2s ease-in-out infinite; box-shadow: 0 0 30px rgba(224,170,69,.35); }
+  #rotate-hint .rh-ic::after { content: ""; position: absolute; left: 50%; top: 10px; width: 30px; height: 5px; margin-left: -15px;
+    background: var(--amber); border-radius: 3px; }
+  @keyframes rh-spin { 0%, 22% { transform: rotate(0deg); } 62%, 100% { transform: rotate(90deg); } }
+  #rotate-hint .rh-t1 { font-family: var(--kai); font-size: 46px; color: var(--amber-hi); letter-spacing: 10px; text-shadow: 0 0 18px rgba(224,170,69,.45); }
+  #rotate-hint .rh-t2 { font-size: 20px; color: var(--ink-dim); letter-spacing: 3px; }
   /* 手机/平板：顶栏改纯图标，避免按钮溢出换行 */
   @media (max-width: 1024px) {
     #topbar { padding: 0 8px; gap: 2px; }
@@ -517,6 +542,13 @@
 
 <!-- 全局背景画（进入游戏后显示） -->
 <div id="bg-art"></div>
+
+<!-- 手机竖屏旋转提示 -->
+<div id="rotate-hint">
+  <div class="rh-ic"></div>
+  <div class="rh-t1">请横屏游玩</div>
+  <div class="rh-t2">旋转手机，旅途即刻展开</div>
+</div>
 
 <!-- ============ 标题界面 ============ -->
 <div id="title-screen">
@@ -639,6 +671,26 @@
     discover().then(ping);
     setInterval(discover, 5 * 60 * 1000); // 每 5 分钟重新发现入口（隧道重开会换地址）
     setInterval(ping, 30000);
+  })();
+
+  /* ================= 手机：竖屏遮罩 + 首次点击尝试全屏锁横屏（仅安卓，失败静默） ================= */
+  (function () {
+    if (!document.documentElement.classList.contains("phone-fit")) return;
+    var sync = function () { document.body.classList.toggle("portrait", window.innerWidth < window.innerHeight); };
+    window.addEventListener("resize", sync);
+    window.addEventListener("orientationchange", function () { setTimeout(sync, 60); });
+    sync();
+    var tryLock = function () {
+      document.removeEventListener("pointerdown", tryLock);
+      try {
+        var el = document.documentElement;
+        var p = el.requestFullscreen ? el.requestFullscreen() : Promise.resolve();
+        Promise.resolve(p).then(function () {
+          if (screen.orientation && screen.orientation.lock) screen.orientation.lock("landscape").catch(function () {});
+        }).catch(function () {});
+      } catch (e) {}
+    };
+    document.addEventListener("pointerdown", tryLock);
   })();
   const $ = id => document.getElementById(id);
 
