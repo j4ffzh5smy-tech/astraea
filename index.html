@@ -417,6 +417,100 @@
   .radio-row { display: flex; gap: 8px; align-items: center; margin: 8px 0; flex-wrap: wrap; }
   .radio-now { border: 1px solid var(--line); padding: 8px 12px; background: #150f08; font-size: 14px; color: var(--green); min-height: 38px; display: flex; align-items: center; }
   input[type=range] { accent-color: var(--amber); }
+
+  /* ================= 小屏适配：手机 / 平板横屏 ================= */
+  /* 手机/平板：顶栏改纯图标，避免按钮溢出换行 */
+  @media (max-width: 1024px) {
+    #topbar { padding: 0 8px; gap: 2px; }
+    #topbar .brand { display: none; }
+    #topbar button { font-size: 0; gap: 0; padding: 6px 8px; }
+    #topbar button svg { width: 17px; height: 17px; }
+    #now-playing { display: none !important; }
+  }
+  /* 平板及以下：整体收紧 */
+  @media (max-width: 1024px), (max-height: 620px) {
+    #game { grid-template-rows: 40px 1fr auto; }
+    #sidebar { padding: 10px 10px 14px; font-size: 12.5px; }
+    .portrait { width: 60px; height: 60px; margin-bottom: 6px; }
+    .portrait span { font-size: 27px; }
+    .side-name { font-size: 16px; }
+    .side-lv { font-size: 11px; }
+    .orb { width: 52px; height: 52px; }
+    .orb .v { font-size: 12px; }
+    .orb .k { font-size: 9px; }
+    .orb-row { gap: 8px; margin: 8px 0 4px; }
+    .mini-bars { margin-top: 6px; }
+    .bar { height: 7px; margin: 2px 0 5px; }
+    .bar-label { font-size: 10.5px; }
+    .stat-row { font-size: 12px; margin: 3px 0; }
+    .side-sec { margin-top: 8px; padding-top: 6px; }
+    .side-sec h4 { font-size: 10px; letter-spacing: 2px; margin-bottom: 4px; }
+    .skill-line { font-size: 11px; line-height: 1.6; }
+    #ui-guide-box { margin-top: 8px; padding: 7px 9px; }
+    #ui-guide-box .gt { font-size: 12px; }
+    #ui-guide-box .gx { font-size: 11px; line-height: 1.6; margin-top: 3px; }
+    .eq-row { font-size: 11.5px; }
+    #scene-bar { top: 10px; left: 12px; padding: 6px 14px 5px 10px; border-left-width: 2px; }
+    #scene-title { font-size: 17px; letter-spacing: 4px; }
+    #scene-sub { font-size: 10.5px; letter-spacing: 1px; }
+    #log { height: 46%; padding: 30px 18px 14px; font-size: 15px; line-height: 1.9; }
+    #log .sys { font-size: 13.5px; }
+    #log .player-input { font-size: 13.5px; }
+    #log .choice-btn { padding: 8px 12px; font-size: 14px; }
+    #actions { max-height: 46vh; padding: 8px 12px 9px; gap: 6px; }
+    #action-dock { gap: 6px 16px; }
+    .ag-label { font-size: 9.5px; letter-spacing: 3px; }
+    .ag-btns { gap: 5px; max-width: none; }
+    .act-btn { min-height: 32px; padding: 5px 10px; font-size: 12.5px; }
+    #input-row { gap: 6px; }
+    #input-row input { padding: 8px 12px; font-size: 13.5px; }
+    #input-row .btn { min-height: 34px; padding: 0 16px; font-size: 13.5px; }
+    .modal { width: 620px; padding: 16px 16px 18px; }
+    .modal h3 { font-size: 18px; letter-spacing: 3px; }
+    .modal h4 { font-size: 12.5px; }
+    .modal .lex-body { font-size: 14px; line-height: 1.9; }
+    .item-row { font-size: 12.5px; }
+    .best-grid, .ppl-grid, .crest-grid { grid-template-columns: 1fr; }
+    .lore-body { font-size: 14px; line-height: 1.9; }
+    .map-marker .nm { font-size: 13px; }
+  }
+  /* 窄屏手机：侧栏进一步压缩，动作坞改为横向滑动单行 */
+  @media (max-width: 720px) {
+    #game { grid-template-columns: 150px 1fr; }
+    .portrait { width: 44px; height: 44px; }
+    .portrait span { font-size: 21px; }
+    .orb { width: 44px; height: 44px; }
+    #log { font-size: 13.5px; line-height: 1.8; padding: 24px 12px 10px; }
+    #scene-bar { top: 8px; left: 8px; padding: 4px 10px 4px 8px; }
+    #scene-title { font-size: 14px; letter-spacing: 2px; }
+    #scene-sub { font-size: 9.5px; }
+    #action-dock { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; padding-bottom: 2px; }
+    .act-group { flex: 0 0 auto; }
+    .ag-btns { flex-wrap: nowrap; }
+    .act-btn { min-height: 30px; padding: 4px 8px; font-size: 11.5px; flex: 0 0 auto; white-space: nowrap; }
+    #actions { max-height: 40vh; }
+    .g-grid { grid-template-columns: 1fr; }
+  }
+  /* 手机横屏（高度很矮）：标题界面压缩 */
+  @media (max-height: 500px) {
+    #title-screen { gap: 10px; }
+    #title-screen h1 { font-size: 40px; letter-spacing: 12px; text-indent: 12px; }
+    #title-screen .sub { font-size: 12px; letter-spacing: 3px; }
+    #title-screen .quote { font-size: 12px; letter-spacing: 2px; }
+    #title-screen .menu { margin-top: 10px; width: 240px; gap: 8px; }
+    .title-btn { padding: 9px 0; font-size: 15px; letter-spacing: 6px; }
+    #title-screen .foot { font-size: 10px; bottom: 10px; left: 12px; }
+    #title-screen .author { font-size: 16px; bottom: 10px; right: 14px; letter-spacing: 3px; }
+  }
+  /* 窄屏手机竖屏：标题再缩 */
+  @media (max-width: 480px) {
+    #title-screen h1 { font-size: 34px; letter-spacing: 8px; text-indent: 8px; }
+    #title-screen .quote { font-size: 11px; padding: 0 16px; text-align: center; }
+  }
+  /* 移动端动态视口（浏览器地址栏伸缩） */
+  @supports (height: 100dvh) {
+    body, #title-screen, #game { height: 100dvh; }
+  }
 </style>
 </head>
 <body>
