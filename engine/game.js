@@ -944,6 +944,10 @@
     if (!def || !def.effect) return "这件东西用不上。";
     if (St.countItem(itemId) <= 0) return "没有了。";
     if (def.type === "tool") return "它会在需要的时候自己派上用场（被动生效）。";
+    const cap = { food: 10, water: 10, hp: p.maxHp, mp: p.maxMp };
+    if (Object.keys(def.effect).every(k => (cap[k] != null ? p[k] : 0) >= cap[k])) {
+      return `现在状态正满，${def.name}先留在包里。`;
+    }
     St.removeItem(itemId, 1);
     const labels = { hp: "HP", mp: "法力", food: "食物", water: "水" };
     const parts = [];
@@ -1061,13 +1065,14 @@
     const p = P();
     if (p.location.region !== "ashford" || p.location.node !== "tavern") return "能安心睡下的床，只有家里有。";
     p.hp = p.maxHp; p.mp = p.maxMp;
+    p.food = 10; p.water = 10;
     St.get().timeSeg = 0;
     const w = rollWeather();
     refreshBoard();
     St.get().turn++;
     const wtxt = { clear: "云开日出，是个好赶路的天。", rain: "雨点敲着酒馆的招牌，泥路怕是不太好走。", fog: "雾气从林子的方向漫过来，今早的雾帷森林怕是更认不得路了。", cold: "一夜极寒，窗棂上结了霜花。出门得多带干粮。" }[w];
     saveNote();
-    return `你在阁楼的床上睡了个整觉。伤口结痂，法力回满。（HP/法力全恢复）\n清晨推窗——${wtxt}（天气：${weatherName(w)}；悬赏板已更新）`;
+    return `你在阁楼的床上睡了个整觉。伤口结痂，法力回满。清晨下楼，玛尔塔不由分说往你行囊里塞满了烤饼和水囊：'饿着肚子可别说是在我店里觉醒的。'（HP/法力全恢复，干粮/饮水补满）\n推窗——${wtxt}（天气：${weatherName(w)}；悬赏板已更新）`;
   }
 
   /* ============ 仓库 ============ */
@@ -1128,7 +1133,7 @@
     if (ndef.camp) acts.push({ id: "camp", label: "扎营（食物−1，全恢复）" });
     // 据点功能
     if (node === "tavern") {
-      acts.push({ id: "rest", label: "休整（睡觉，推进天气）" });
+      acts.push({ id: "rest", label: "休整（睡觉：全恢复，免费补满水粮）" });
       acts.push({ id: "news", label: "听大新闻" });
       acts.push({ id: "dice", label: "来一局龙骰（小赌怡情）" });
       acts.push({ id: "talk", label: "与玛尔塔交谈", payload: "martha" });

@@ -178,7 +178,7 @@
     p.water = Math.max(0, p.water - waterCost);
     if (starving) {
       p.hp = Math.max(1, p.hp - 3);
-      notes.push("补给已经见底。饥饿与干渴啃噬着你，HP −3。该回家了。");
+      notes.push("补给已经见底。饥饿与干渴啃噬着你，HP −3。回家睡一觉，玛尔塔的餐桌会解决一切。");
     }
     if (toRegion === "lavarift") notes.push("裂谷的热浪让水囊以可见的速度变轻。");
     return notes;
@@ -189,7 +189,7 @@
     const notes = [];
     const starving = (p.food <= 0 || p.water <= 0);
     p.water = Math.max(0, p.water - (region === "lavarift" ? 2 : 1));
-    if (starving) { p.hp = Math.max(1, p.hp - 3); notes.push("你空着肚子在野地里翻找，眼前一阵阵发黑。HP −3。"); }
+    if (starving) { p.hp = Math.max(1, p.hp - 3); notes.push("你空着肚子在野地里翻找，眼前一阵阵发黑。HP −3。回家睡一觉就能免费补满水粮。"); }
     return notes;
   }
 

@@ -16,6 +16,13 @@
   } catch (e) {}
 })();
 </script>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="魔导纪元">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#100c08">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
 <title>魔导纪元 · Astraea</title>
 <style>
   :root {
@@ -556,9 +563,11 @@
   <div class="sub">ASTRAEA · 魔法纪元 743 年</div>
   <div class="quote">世界树枯死后的第七十二个冬天 —— 王都在远方，龙在更远方</div>
   <div class="menu">
+    <button class="title-btn" id="fs-play-btn" style="display:none;">全屏横屏游玩</button>
     <button class="title-btn primary" id="continue-btn" style="display:none;">继续旅途</button>
     <button class="title-btn" id="newgame-btn">踏上旅途</button>
   </div>
+  <div class="dim" id="fs-hint" style="display:none;letter-spacing:1px;line-height:2;max-width:360px;text-align:center;font-size:13px;"></div>
   <div class="foot">铜壶与龙息 · 烬炉镇 —— 每一个传奇，都曾是无名之辈</div>
   <div class="author">作者：Lewis</div>
 </div>
@@ -751,7 +760,12 @@
   /* ================= 全屏模式 ================= */
   $("fs-btn").onclick = () => {
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-    else document.documentElement.requestFullscreen().catch(() => {});
+    else {
+      const r = document.documentElement.requestFullscreen();
+      if (r && r.then) r.then(() => {
+        if (screen.orientation && screen.orientation.lock) screen.orientation.lock("landscape").catch(() => {});
+      }).catch(() => {});
+    }
   };
   document.addEventListener("fullscreenchange", () => {
     const sp = $("fs-btn").querySelector("span");
@@ -768,6 +782,29 @@
     render();
   };
   $("newgame-btn").onclick = () => openGrimoireModal();
+
+  /* 触屏设备：全屏横屏入口（安卓浏览器可生效；iPhone/微信不支持网页全屏时给出引导） */
+  if (("ontouchstart" in window) || navigator.maxTouchPoints > 0) {
+    $("fs-play-btn").style.display = "";
+    $("fs-play-btn").onclick = () => {
+      $("fs-hint").style.display = "none";
+      const fallback = () => setTimeout(() => {
+        if (!document.fullscreenElement) {
+          $("fs-hint").innerHTML = "当前浏览器不支持网页全屏。<br>iPhone：点浏览器底部「分享」→「添加到主屏幕」，从桌面图标进入即是全屏体验；<br>安卓：请复制网址到系统浏览器（Chrome）打开。";
+          $("fs-hint").style.display = "";
+        }
+      }, 700);
+      try {
+        const r = document.documentElement.requestFullscreen();
+        if (r && r.then) {
+          r.then(() => {
+            if (screen.orientation && screen.orientation.lock) screen.orientation.lock("landscape").catch(() => {});
+            fallback();
+          }).catch(fallback);
+        } else fallback();
+      } catch (e) { fallback(); }
+    };
+  }
 
   function openGrimoireModal() {
     const cards = A.DATA.grimoires.elements.map(el => {
