@@ -18,6 +18,7 @@ if sys.stdout is None:
 BASE = os.path.dirname(os.path.abspath(__file__))
 DB = os.path.join(BASE, "data.db")
 EXCLUDE_FILE = os.path.join(BASE, "exclude_pids.txt")
+LOG_FILE = os.path.join(BASE, "requests.log")
 PORT = 8931
 ONLINE_WINDOW = 90          # 90 秒内有心跳视为在线
 SESSION_TAIL = 30           # 会话结束时长补偿：最后一个心跳后再计 30 秒
@@ -216,6 +217,7 @@ class Handler(BaseHTTPRequestHandler):
             q = parse_qs(u.query)
             pid = clean((q.get("pid") or [""])[0])
             sid = clean((q.get("sid") or [""])[0])
+            self.log_request_line("/ping", "pid=" + (pid or "?") + " sid=" + (sid or "?"))
             if pid and sid:
                 record(pid, sid)
             return self._send(200, "ok")
@@ -240,6 +242,16 @@ class Handler(BaseHTTPRequestHandler):
 
     def log_message(self, *a):
         pass
+
+    def log_request_line(self, path, extra=""):
+        # 请求流水：时间 IP 路径 附加信息，用于排查玩家心跳是否到达
+        try:
+            ts = time.strftime("%m-%d %H:%M:%S", time.localtime())
+            ip = self.client_address[0] if self.client_address else "-"
+            with open(LOG_FILE, "a", encoding="utf-8") as f:
+                f.write("%s %s %s %s\n" % (ts, ip, path, extra))
+        except Exception:
+            pass
 
 
 if __name__ == "__main__":

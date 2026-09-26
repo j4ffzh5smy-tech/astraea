@@ -1,3 +1,4 @@
 *.bak
 analytics/data.db
 analytics/cloudflared.exe
+analytics/requests.log
