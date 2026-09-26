@@ -1124,6 +1124,7 @@
       document.querySelectorAll(".map-marker").forEach(mk => mk.onclick = () => {
         if (mk.dataset.play === "1") return openRegionMap(mk.dataset.rid);
         $("map-info").textContent = mk.dataset.info;
+        if (mk.classList.contains("locked")) $("map-info").textContent += "——此地尚未开放：它不拦有耐心的人。跟着主线委托一步步走，路会自己打开。";
         $("map-info").className = "";
       });
     }

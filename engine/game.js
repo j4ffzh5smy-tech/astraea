@@ -99,7 +99,7 @@
     text += discoverNode(region, node);
     // 安全区内走动：四成概率撞上镇/哨所的环境日常（世界不围着玩家转）
     if (REGIONS[region].safe && Math.random() < 0.4) {
-      const table = (G.DATA.ambient_events[region] || []).filter(ev => !ev.battle && !(ev.once_flag && St.getFlag(ev.once_flag)));
+      const table = (G.DATA.ambient_events[region] || []).filter(ev => !ev.battle && !(ev.once_flag && St.getFlag(ev.once_flag)) && !(ev.night_only && (St.get().timeSeg || 0) !== 3));
       if (table.length) {
         const ev = pickWeighted(table);
         if (ev.once_flag) St.setFlag(ev.once_flag, true);
@@ -170,6 +170,7 @@
     const table = (G.DATA.ambient_events[region] || []).filter(ev => {
       if (ev.node && ev.node !== node) return false;
       if (ev.once_flag && St.getFlag(ev.once_flag)) return false;
+      if (ev.night_only && (St.get().timeSeg || 0) !== 3) return false;
       return true;
     });
     if (!table.length) { saveNote(); return text + "\n你在四周转了一圈，只有风。"; }
@@ -1344,6 +1345,11 @@
       else if (cb.action === "item" && cb.item) out += "\n" + combatAction("item", cb.item);
       else if (cb.action === "attack") out += "\n" + combatAction("skill", "attack");
     }
+    // 近期叙事回顾：截断摘要存入存档，供下回合 prompt 保持连续性
+    const st = St.get();
+    const log = st.storyLog || (st.storyLog = []);
+    log.push({ q: text.slice(0, 40), a: out.replace(/\s+/g, " ").slice(0, 110) });
+    if (log.length > 6) log.shift();
     updateQuestReadiness();
     saveNote();
     return { text: out, choices: contract.choices || [] };

@@ -47,9 +47,12 @@
       "禁止创造世界圣经之外的地理/势力/历史；禁止让玩家进入龙眠荒原/镜湖/圣辉城；禁止复活、传送、时间魔法。",
       `【导演指令·心境】当前心境：${mood}。叙事全程贴合这个基调，不要中途换挡。`,
       `【导演指令·近期事件】玩家最近经历：${events}。叙事中可以回望、提及或让这些事在环境里留下余波（路人的眼神、伤口的钝痛、未干的泥），让世界记得玩家做过的事。`,
+      (s.storyLog && s.storyLog.length)
+        ? "【近期叙事回顾】最近几回合（由旧到新）：\n" + s.storyLog.map(t => "玩家：" + t.q + " → " + t.a).join("\n") + "\n叙事必须与此衔接：场景、在场人物、未了之事都要延续，不得重置场景、不得让说过的话作废。"
+        : null,
       "【文风规则】禁止总结腔（'总之''就这样''你感到一段旅程结束了'）；每段叙事至少落在一个具体的感官细节上（气味、温度、声响、触感）；结尾停在一个画面或动作上，不要用旁白点评收束；不用'你决定''你选择'这类元叙述。",
       "【输出契约】严格输出 JSON（不要 markdown 代码块）：{\"narration\":\"给玩家看的中文叙事，150-300字\",\"state_change_requests\":[{\"field\":\"hp\",\"delta\":-5,\"reason\":\"...\"}],\"scene_flags\":{},\"combat\":null,\"choices\":[\"选项1\",\"选项2\",\"选项3\"]}。choices 给出 2-4 个符合当前场景的后续动作建议。"
-    ].join("\n\n");
+    ].filter(Boolean).join("\n\n");
 
     const user = [
       `【当前状态】位置：${G.Game.regionName(p.location.region)}·${nodeInfo.name}；时段：${segName}；天气：${G.Game.weatherName(s.weather)}；HP ${p.hp}/${p.maxHp}，法力 ${p.mp}/${p.maxMp}，金币 ${p.gold}，食物 ${p.food}/10，水 ${p.water}/10；声望：${St.repTitle()}(${p.reputation})；魔导书：${G.DATA.grimoires.element_names[p.grimoire.element]}，技能：${skills}`,
