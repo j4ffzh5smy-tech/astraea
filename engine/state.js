@@ -23,7 +23,7 @@
       player: {
         name: name || "无名者",
         level: 1, exp: 0,
-        hp: 30, maxHp: 30, mp: 20, maxMp: 20,
+        hp: 30, maxHp: 30, mp: 24, maxMp: 24,
         gold: 30, food: 6, water: 6,
         grimoire: { element: element, unlockedPages: [1] },
         reputation: 0,
@@ -99,10 +99,10 @@
 
   function addExp(n) {
     const p = S.player;
-    p.exp += n;
+    p.exp += n * 2; // 全局双倍经验：前期成长节奏（15 分钟内可见升级）
     const ups = [];
-    while (p.level < 10 && p.exp >= p.level * 60) {
-      p.exp -= p.level * 60;
+    while (p.level < 10 && p.exp >= p.level * 40) {
+      p.exp -= p.level * 40;
       p.level += 1;
       p.maxHp += 6; p.maxMp += 4;
       p.hp = p.maxHp; p.mp = p.maxMp;

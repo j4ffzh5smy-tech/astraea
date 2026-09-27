@@ -154,6 +154,9 @@
     const p = P();
     const { region, node } = p.location;
     if (REGIONS[region].safe) return "镇子里没什么可探索的——想找事做，去广场看看悬赏板，或者出门走远点。";
+    if (p.food <= 0 || p.water <= 0) {
+      return "补给已经见底，眼前的景物开始打转——走不出下一段路了。回家睡一觉（免费补满水粮），或就地「扎营」（食物−1，全恢复）。";
+    }
     const notes = G.Rules.consumeForExplore(region);
     tickTime();
     let text = notes.join("\n");
@@ -199,10 +202,15 @@
     } else if (ev.effect) {
       text += (text ? "\n" : "") + et;
       const p2 = P();
-      for (const k in ev.effect) {
-        p2[k] += ev.effect[k];
-        const nm = { hp: "HP", food: "食物", water: "水" }[k] || k;
-        text += `（${nm} ${ev.effect[k] > 0 ? "+" : ""}${ev.effect[k]}）`;
+      const harmful = Object.keys(ev.effect).some(k => ev.effect[k] < 0);
+      if (harmful && Math.random() < 0.5) {
+        text += "（你反应极快，堪堪避开这一遭——毫发无损。）";
+      } else {
+        for (const k in ev.effect) {
+          p2[k] += ev.effect[k];
+          const nm = { hp: "HP", food: "食物", water: "水" }[k] || k;
+          text += `（${nm} ${ev.effect[k] > 0 ? "+" : ""}${ev.effect[k]}）`;
+        }
       }
     } else if (ev.quest_hook) {
       Game.pendingOffer = ev.quest_hook;
@@ -364,10 +372,15 @@
     return text;
   }
 
+  const DECLINE_LINES = [
+    "你按下心里的波澜，继续赶路。世界很大，管不过来的事也很多——这也是实话。",
+    "你摇了摇头，把这个念头从脑子里赶出去。自己的旅途尚且泥泞，哪来的余力？……你把这个声音也一并摁下了。",
+    "你停了半步，又走。风把身后的声音吹散在雾里——有些选择，要走出很远才敢回头去看。"
+  ];
   function declineOffer() {
     Game.pendingOffer = null;
     saveNote();
-    return "你按下心里的波澜，继续赶路。世界很大，管不过来的事也很多——这也是实话。";
+    return DECLINE_LINES[Math.floor(Math.random() * DECLINE_LINES.length)];
   }
 
   function updateQuestReadiness() {
@@ -801,6 +814,7 @@
     let roll = Math.random() * total, pick = pool[0];
     for (const r of pool) { roll -= r.weight; if (roll <= 0) { pick = r; break; } }
     St.setFlag("last_rumor_" + (sourceId || "news"), pick.id);
+    St.discover("rumors", pick.id);
     applyRumorEffects(pick);
     return `【传闻】${pick.text}`;
   }

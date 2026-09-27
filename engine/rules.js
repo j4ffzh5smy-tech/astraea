@@ -164,6 +164,8 @@
   function consumeForMove(toRegion) {
     const p = St.get().player;
     const notes = [];
+    // 烬炉镇内跑腿不耗补给——办事不该跳过一顿饭的时间
+    if (p.location.region === "ashford" && toRegion === "ashford") return notes;
     let foodCost = 1, waterCost = (toRegion === "lavarift") ? 2 : 1;
     if (St.get().weather === "cold" && !["lavarift", "thunderpass"].includes(toRegion) && !["lavarift", "thunderpass"].includes(p.location.region)) {
       foodCost += 1; notes.push("极寒逼人，你得多吃点东西扛住寒气。");
@@ -177,8 +179,8 @@
     p.food = Math.max(0, p.food - foodCost);
     p.water = Math.max(0, p.water - waterCost);
     if (starving) {
-      p.hp = Math.max(1, p.hp - 3);
-      notes.push("补给已经见底。饥饿与干渴啃噬着你，HP −3。回家睡一觉，玛尔塔的餐桌会解决一切。");
+      p.hp = Math.max(1, p.hp - 2);
+      notes.push("你空着肚子赶路，胃里像有把钝刀在慢慢搅。HP −2。到家就好了——睡一觉，玛尔塔的餐桌会解决一切。");
     }
     if (toRegion === "lavarift") notes.push("裂谷的热浪让水囊以可见的速度变轻。");
     return notes;

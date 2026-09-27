@@ -938,7 +938,7 @@
     $("ui-portrait-char").textContent = (p.name || "无").slice(0, 1);
     $("ui-name").textContent = p.name;
     $("ui-level").textContent = "Lv." + p.level;
-    $("ui-exp").textContent = p.exp + "/" + (p.level * 60);
+    $("ui-exp").textContent = p.exp + "/" + (p.level * 40) + "（差 " + Math.max(0, p.level * 40 - p.exp) + "）";
     $("ui-hp").textContent = p.hp + "/" + p.maxHp;
     $("ui-mp").textContent = p.mp + "/" + p.maxMp;
     $("ui-foodbar").style.width = (p.food / 10 * 100) + "%";
